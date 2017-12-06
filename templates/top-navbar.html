@@ -1,0 +1,57 @@
+{% load static %}
+
+<a href="{% url 'index' %}" class="logo">
+    <span class="logo-mini"><b>R</b>.TS</span>
+    <span class="logo-lg"><b>Viewflow </b>demo</span>
+</a>
+<nav class="navbar navbar-static-top">
+    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </a>
+
+    <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+            {% if users %}
+                <li class="dropdown">
+                    <a  href="#"
+                        data-toggle="dropdown"
+                        class="dropdown-toggle"
+                        role="button"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                        Login As
+                    </a>
+                    <ul class="dropdown-menu userswitchlist">
+                        {% for user in users %}
+                            <li class="user_selection" role="presentation"><a role="menuitem" tabindex="-1">{{user}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <form style="display:none" id="userswitchform" method="post"  action="{% url 'fast_login' %}">
+                    {% csrf_token %}
+                    <input id="username" name="username" type="hidden"/>
+                </form>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="hidden-xs">{{ request.user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a role="menuitem" tabindex="-1" href="#">Profile</a></li> 
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'fast_logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            <li>
+                <a href="http://www.rezayat.com">
+                <img width="70" src="{% static 'images/navbar_logo_s.png' %}">
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

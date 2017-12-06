@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load crispy_forms_tags %}
+
+{% block main_content %}
+<div class="box box-primary">
+    <form action="{% url 'add_daily' %}" method="post" class="form form-inline">
+        {% csrf_token %}
+        <div class="box-body">
+            <p>
+                <!-- {% crispy form %} -->
+                {{ form }}
+            </p>
+        </div>
+        <div class="box-footer">
+            <input type="submit" class='btn btn-primary' value="Submit"/>
+            <a href="{% url 'timesheets' %}" class='btn'> My Sheets </a>
+        </div>
+    </form>
+</div>
+
+{% endblock main_content %}

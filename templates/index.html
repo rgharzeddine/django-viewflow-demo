@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load tags %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block title_note %}
+available actions
+{% endblock %}
+
+{% block main_content %}
+{% if user.is_authenticated %}
+<div class="row">
+    <div class="col-md-10">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Welcome 
+                    <strong>
+                        {{user.username}}
+                    </strong>
+                </h3>
+            </div>
+            <div class="box-body actions">
+                <ul>
+                    <li>
+                        <a href="{% url 'timesheets' %}">
+                            <span class="glyphicon glyphicon-time"></span>View my timesheets
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-md-10">
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Welcome</h3>
+            </div>
+            <div class="box-body actions">
+                <p>
+                    You are not logged in :(
+                </p>
+                <p>
+                    You can login by selecting your name from top menu
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock main_content %}

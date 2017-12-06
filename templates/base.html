@@ -1,0 +1,74 @@
+{% extends 'skeleton.html' %}
+{% load static %}
+
+{% block body %}
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+        <header class="main-header">
+            {% include 'top-navbar.html' %}
+        </header>
+
+        <aside class="main-sidebar">
+            {% include 'left-sidebar.html' %}
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    {% block title %}{% endblock title %}
+                    <small>{% block title_note %} {% endblock %}</small>
+                </h1>
+                {% block breadcrumbs %}
+                {% endblock breadcrumbs %}
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                {% block messages %}
+                    {% for message in messages %}
+                        <div
+                     {% if message.tags == 'error' %}
+                         class="alert alert-danger alert-dismissible"
+                     {% else %}
+                             class="alert alert-{{message.tags}} alert-dismissible"
+                         {% endif %}
+                             >
+                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                             {{message}}
+                        </div>
+                    {% endfor %}
+                {% endblock messages %}
+                {% block buttons %}
+                {% endblock buttons %}
+                {% block main_content %}
+                {% endblock main_content %}
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.0
+            </div>
+            <strong>Copyright &copy; 2016-2017 <a href="http://www.rezayat.com">Rezayat </a>.</strong> All rights
+            reserved.
+        </footer>
+    </div>
+    <!-- ./wrapper -->
+    {% block js %}
+        <script src="{% static 'js/jquery.min.js' %}"> </script>
+        <script src="{% static 'js/bootstrap.min.js' %}"> </script>
+        <script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+        <script src="{% static 'js/fastclick.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap-datepicker.min.js' %}"> </script>
+        <script src="{% static 'js/bootstrap-filestyle.min.js' %}"> </script>
+        <script src="{% static 'js/select2.full.min.js' %}"></script>
+        <script src="{% static 'js/app.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"> </script>
+    {% endblock js %}
+</body>
+{% endblock body %}

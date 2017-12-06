@@ -1,0 +1,67 @@
+{% extends 'skeleton.html' %}
+
+{% load static %}
+
+{% block body %}
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="/"><b>Rezayat</b>.Timesheet</a>
+        </div>
+        {% for message in messages %}
+        <div
+        {% if message.tags == 'error' %}
+        class="alert alert-danger alert-dismissible"
+        {% else %}
+        class="alert alert-{{message.tags}} alert-dismissible"
+        {% endif %}
+        >
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+        {{message}}
+    </div>
+    {% endfor %}
+    <!-- /.login-logo -->
+    <div class="login-box-body">
+        <p class="login-box-msg">Login in to start your session</p>
+        <form action="." method="post">
+            {% csrf_token %}
+            <div class="row">
+                <!-- /.col -->
+                <div class="col-xs-6">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+                <!-- /.col -->
+                <div class="col-xs-6">
+                    {% if users %}
+                    <button class="btn btn-block btn-flat" type="button" data-toggle="dropdown">Fast Login <span class="caret"></span> </button>
+                    <ul class="dropdown-menu userswitchlist">
+                        {% for user in users %}
+                        <li class="user_selection" role="presentation"><a role="menuitem" tabindex="-1">{{user}}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            <input type="hidden" name="next" value="{{next}}" />
+        </form>
+        <form style="display:none" id="userswitchform" method="post"  action="{% url 'fast_login' %}">
+            {% csrf_token %}
+            <input id="username" name="username" type="hidden"/>
+        </form>
+    </div>
+</div>
+<!-- ./wrapper -->
+{% block js %}
+<script src="{% static 'js/jquery.min.js' %}"> </script>
+<script src="{% static 'js/bootstrap.min.js' %}"> </script>
+<script src="{% static 'js/jquery.slimscroll.min.js' %}"></script>
+<script src="{% static 'js/fastclick.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}"> </script>
+<script src="{% static 'js/bootstrap-filestyle.min.js' %}"> </script>
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'js/main.js' %}"> </script>
+{% endblock js %}
+</body>
+{% endblock %}
