@@ -129,3 +129,5 @@ FAST_LOGIN = True
 USER_PASSWORD = 'pass@1234'
 
 AUTH_PROFILE_MODULE = 'auth.User'
+
+DATE_INPUT_FORMAT = ['%d/%m/%Y']

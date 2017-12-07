@@ -1,29 +1,36 @@
 
 from django import forms
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import (
-    Field,
-    Layout,
-    HTML,
-    ButtonHolder,
-    Submit)
-
+from django.conf import settings
 
 from .models import DailyTimesheet
 
 
 class DailyTimesheetForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        """initializes form with desired style configuration"""
-
-        super(DailyTimesheetForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-        self.helper.form_class = 'form form-inline'
-        self.helper.label_class = 'hidden'
+    date = forms.DateField(
+        input_formats=settings.DATE_INPUT_FORMAT,
+        widget=forms.DateInput(
+            attrs={'class': 'datepicker week-start-date form-control'}))
 
     class Meta:
         model = DailyTimesheet
-        fields = ['date', 'status']
-        widgets = {'user': forms.HiddenInput()}
+        fields = ['date', 'code']
+
+
+class DailyTimesheetApprovalForm(forms.ModelForm):
+
+    class Meta:
+        model = DailyTimesheet
+        fields = ['approval_status']
+
+
+class DailyTimesheetUpdateForm(forms.ModelForm):
+
+    date = forms.DateField(
+        input_formats=settings.DATE_INPUT_FORMAT,
+        widget=forms.DateInput(
+            attrs={'class': 'datepicker week-start-date form-control'}))
+
+    class Meta:
+        model = DailyTimesheet
+        fields = ['date', 'code']

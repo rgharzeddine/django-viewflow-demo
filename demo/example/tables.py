@@ -8,12 +8,10 @@ class DailyTimesheetTable(tables.Table):
     """table class to display attachments"""
 
     delete_column = TemplateColumn(
-        """<button
-            class="btn btn-sm btn-danger"
-            name="remove"
-            value="{{ record.pk }}">
-            <i class="fa fa-times"></i>&nbsp; Remove
-            </button>
+        """<a href="{% url 'update_daily' record.pk %}"
+            class="btn btn-sm btn-primary">
+            <i class="fa fa-edit"></i>&nbsp; Modify
+            </a>
         """,
         verbose_name='Actions',
         orderable=False,
@@ -43,6 +41,11 @@ class DailyTimesheetTable(tables.Table):
         orderable=False,
         accessor='approved_by',
     )
+    approved_at = Column(
+        verbose_name='Approved At',
+        orderable=False,
+        accessor='approved_at',
+    )
 
     class Meta:
         """Meta Attributes"""
@@ -54,6 +57,7 @@ class DailyTimesheetTable(tables.Table):
             'for_user',
             'approval_status',
             'approved_by',
+            'approved_at',
             'delete_column',
         )
         attrs = {'class': 'table table-bordered '}

@@ -2,12 +2,12 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-Create Timesheet
+Approve Timesheet
 {% endblock %}
 
 {% block main_content %}
 <div class="box box-primary">
-    <form action="{% url 'add_daily' %}" method="post" class="form form-inline">
+    <form action="{% url 'update_daily' dailytimesheet.pk %}" method="post" class="form form-inline">
         {% csrf_token %}
         <div class="box-body">
             <p>

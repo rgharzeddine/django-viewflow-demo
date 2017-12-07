@@ -13,13 +13,15 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
 
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 from django_tables2 import SingleTableMixin
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
 
 from .models import DailyTimesheet
 from .tables import DailyTimesheetTable
+from .forms import (
+    DailyTimesheetForm, DailyTimesheetApprovalForm, DailyTimesheetUpdateForm)
 
 
 def fast_login(request):
@@ -51,9 +53,6 @@ def home(request):
     context = dict(
         users=User.objects.all(),
         today=date.today(),
-        # tasks=DailyTimesheet.objects.filter(
-        #     user=request.user
-        # )
     )
 
     return render(request, 'index.html', context)
@@ -104,6 +103,10 @@ class DailyTimesheetListView(SingleTableMixin, LoginRequiredMixin, ListView):
     context_object_name = 'sheets'
 
     def get_queryset(self):
+        user = self.request.user
+        if user.has_perm('auth.can_approve'):
+            return DailyTimesheet.objects.all()
+
         return DailyTimesheet.objects.filter(
             for_user__username=self.request.user.username)
 
@@ -112,16 +115,41 @@ class DailyTimesheetListView(SingleTableMixin, LoginRequiredMixin, ListView):
             DailyTimesheetListView, self).get_context_data(**kwargs)
 
         context['users'] = User.objects.all()
+        context['approving'] = self.request.user.has_perm('auth.can_approve')
         return context
 
 
 class DailyTimesheetCreateView(LoginRequiredMixin, CreateView):
     model = DailyTimesheet
-    fields = ['date', 'code']
     success_url = reverse_lazy('timesheets')
+    form_class = DailyTimesheetForm
 
     def form_valid(self, form):
         sheet = form.save(commit=False)
         sheet.for_user = self.request.user
+        sheet.save()
+        return redirect(self.success_url)
+
+
+class DailyTimesheetUpdateView(LoginRequiredMixin, UpdateView):
+    model = DailyTimesheet
+    template_name = 'example/dailytimesheetapproval_form.html'
+    success_url = reverse_lazy('timesheets')
+
+    def get_form_class(self):
+        if self.request.user.has_perm('auth.can_approve'):
+            return DailyTimesheetApprovalForm
+        return DailyTimesheetUpdateForm
+
+    def form_valid(self, form):
+        sheet = form.save(commit=False)
+        if self.request.user.has_perm('auth.can_approve'):
+            sheet.approved_by = self.request.user
+            sheet.approved_at = datetime.now()
+        else:
+            sheet.approved_by = None
+            sheet.approved_at = None
+            sheet.approval_status = 'pending'
+
         sheet.save()
         return redirect(self.success_url)

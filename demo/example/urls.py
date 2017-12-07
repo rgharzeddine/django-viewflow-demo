@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^fast_logout$', views.fast_logout, name='fast_logout'),
     url(r'^timesheet/add$', views.DailyTimesheetCreateView.as_view(),
         name='add_daily'),
+    url(r'^timesheet/(?P<pk>\d+)/$', views.DailyTimesheetUpdateView.as_view(),
+        name='update_daily'),
     url(r'^timesheet$', views.DailyTimesheetListView.as_view(),
         name='timesheets'),
 ]
