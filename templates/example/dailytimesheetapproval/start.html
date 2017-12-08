@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block title_note %}
+available actions
+{% endblock %}
+
+{% block main_content %}
+<form action="." method="post">
+    {% csrf_token %}
+    {{ form }}
+    {{ activation.management_form }}
+    <input type="submit" value="sub">
+</form>
+{% endblock main_content %}

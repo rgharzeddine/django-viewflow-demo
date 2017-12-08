@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% load tags %}
+
 
 {% block title %}
 Dashboard
@@ -27,7 +27,12 @@ available actions
                 <ul>
                     <li>
                         <a href="{% url 'timesheets' %}">
-                            <span class="glyphicon glyphicon-time"></span>View my timesheets
+                            <span class="glyphicon glyphicon-time"></span> View Latest timesheets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'wf:start' %}">
+                            <span class="glyphicon glyphicon-edit"></span> Fill a daily timesheet
                         </a>
                     </li>
                 </ul>

@@ -1,30 +1,54 @@
-from viewflow import flow
+from viewflow import flow, lock
 from viewflow.base import this, Flow
-# from viewflow.flow.views import CreateProcessView, UpdateProcessView
-from .views import ApproveDailyTimesheetView, CreateDailyTimesheetView
+from viewflow.flow.views import CreateProcessView, UpdateProcessView
 
-from .models import DailyTimesheet
+from django.contrib.auth.models import User
+# from viewflow.decorators import flow_start_func
+
+# from .models import DailyTimesheet
+from .models import DailyTimesheetApproval
+from .views import FillProcessView
+
+# @flow_start_func
+# def create_flow(activation, **kwargs):
+#     activation.prepare()
+#     activation.done()
+#     return activation
+
+
+def approval_assign(activation):
+    #
+    return User.objects.get(username='omar')
 
 
 class DailyTimesheetApprovalFlow(Flow):
-    process_class = DailyTimesheet
+    process_class = DailyTimesheetApproval
+    # lock_impl = lock.select_for_update_lock
+    lock_impl = lock.no_lock
 
-    start = (
-        flow.View(
-            CreateDailyTimesheetView,
-        ).Next(this.fill)
-    )
+    label = 'daily'
+    flow_label = 'daily'
+
+    start = flow.Start(
+        fields=['name'],
+    ).Next(this.fill)
+
     fill = (
         flow.View(
-            CreateDailyTimesheetView,
-            fields=['date', 'status'],
-        ).Next(this.approve)
+            # CreateDailyTimesheetView,
+            FillProcessView,
+            # fields=['date', 'code'],
+            task_title='Fill Daily Timesheet')
+        .Next(this.approve)
     )
+
     approve = (
         flow.View(
-            ApproveDailyTimesheetView,
+            # ApproveDailyTimesheetView,
+            UpdateProcessView,
             fields=['approval_status'])
-        .Permission('auth.can_approve_daily_timesheet')
+        .Permission('auth.can_approve')
+        .Assign(approval_assign)
         .Next(this.check_approval)
     )
 

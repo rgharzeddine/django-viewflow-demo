@@ -2,37 +2,26 @@
 
 {% load render_table from django_tables2 %}
 
-
 {% block title %}
-
-{% if approving %}
-Approve Timesheets
-{% else %}
-My Timesheets
-{% endif %}
-
+My Tasks
 {% endblock %}
-
 
 {% block main_content %}
 <div class="box box-primary">
     <div class="box-header with-border">
         <i class="fa fa-black-tie"></i>
-        <h3 class="box-title">User Daily Timesheets</h3>
+        <h3 class="box-title">User Tasks</h3>
     </div>
     <div class="box-body">
-        {% if sheets %}
-            {% render_table sheets_table %}
+        {% if tasks %}
+            {% render_table tasks_table %}
         {% else %}
         <p>
-            You have no daily timesheets
+            You have no tasks
         </p>
         {% endif %}
     </div>
     <div class="box-footer">
-        <a href="{% url 'wf:start' %}" class="btn btn-default">
-            <span class="glyphicon glyphicon-edit"></span> Fill a timesheet
-        </a>        
         <a href="{% url 'index' %}" class="btn btn-default">
             <span class="glyphicon glyphicon-home"></span> Home
         </a>        

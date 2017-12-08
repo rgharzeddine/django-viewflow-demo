@@ -18,14 +18,26 @@
         <li><a href="{% url 'index' %}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
         <li class="treeview">
             <a href="#">
-                <i class="fa fa-calendar"></i> <span>My Timesheets</span>
+                <i class="fa fa-calendar"></i> <span>Processes</span>
                 <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                 </span>
             </a>
             <ul class="treeview-menu">
-                <li><a href="#"><i class="fa fa-circle-o"></i> 1 </a></li>
-                <li><a href="#"><i class="fa fa-circle-o"></i> 2 </a></li>
+                <li><a href="#"><i class="fa fa-circle-o"></i>Complete</a></li>
+                <li><a href="#"><i class="fa fa-circle-o"></i>Incomplete</a></li>
+            </ul>
+        </li>
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-calendar"></i> <span>Tasks</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li><a href="{% url 'tasks' %}"><i class="fa fa-circle-o"></i>Complete</a></li>
+                <li><a href="{% url 'tasks' %}"><i class="fa fa-circle-o"></i>Incomplete</a></li>
             </ul>
         </li>
 

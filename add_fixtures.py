@@ -7,12 +7,12 @@ sys.path.append(os.getcwd())
 SETTINGS = 'demo.settings'
 os.environ['DJANGO_SETTINGS_MODULE'] = SETTINGS
 
-import django
+import django  # noqa
 django.setup()
 
-from demo import settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User, Permission, Group
+from demo import settings  # noqa
+from django.contrib.contenttypes.models import ContentType  # noqa
+from django.contrib.auth.models import User, Permission, Group  # noqa
 
 
 def add_user(username):
@@ -51,16 +51,16 @@ def add_user_to_group(username, group_name):
 
 
 if __name__ == '__main__':
-    # create users
-    add_user('rawad')
-    add_user('lara')
-    add_user('dinesh')
-    add_user('abbas')
-    add_user('kabbas')
-
     # create a managers group has approval permissions
     add_group('managers', ['can_approve'])
 
     # create a manager
     add_user('omar')
     add_user_to_group('omar', 'managers')
+
+    # create users
+    add_user('lara')
+    add_user('rawad')
+    add_user('dinesh')
+    add_user('abbas')
+    add_user('kabbas')

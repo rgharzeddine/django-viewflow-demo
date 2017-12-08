@@ -6,15 +6,15 @@ from django.db.models import (
     CASCADE,
     CharField,
     DateField,
-    # OneToOneField,
+    OneToOneField,
     DateTimeField,
     ForeignKey,
-    # Model,
+    Model,
 )
 from viewflow.models import Process
 
 
-class DailyTimesheet(Process):
+class DailyTimesheet(Model):
 
     CODE = [
         ('absent', 'Absent'),
@@ -36,10 +36,6 @@ class DailyTimesheet(Process):
     )
     created_at = DateTimeField(auto_now=True)
 
-# class DailyTimesheetApproval(Process):
-#     pass
-    # sheet = OneToOneField(
-    #     DailyTimesheet, on_delete=CASCADE, related_name='approval')
     APPROVAL_STATUS = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
@@ -58,3 +54,24 @@ class DailyTimesheet(Process):
         null=True,
         on_delete=CASCADE,
         related_name='approvals')
+
+
+class DailyTimesheetApproval(Process):
+
+    sheet = OneToOneField(
+        DailyTimesheet,
+        on_delete=CASCADE,
+        null=True,
+        related_name='approval')
+
+    name = CharField(
+        max_length=50,
+    )
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        return str(self.pk) + ' :D'
+
+    __repr__ = __str__
+    str = __str__
