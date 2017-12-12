@@ -15,3 +15,10 @@ class FillDailyTimesheetForm(forms.ModelForm):
     class Meta:
         model = DailyTimesheet
         fields = ['date', 'code']
+
+
+class ApproveDailyTimesheetForm(forms.ModelForm):
+
+    class Meta:
+        model = DailyTimesheet
+        fields = ['approval_status']

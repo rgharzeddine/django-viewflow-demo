@@ -53,14 +53,22 @@ def add_user_to_group(username, group_name):
 if __name__ == '__main__':
     # create a managers group has approval permissions
     add_group('managers', ['can_approve'])
+    add_group('users', ['no_permission'])
 
     # create a manager
     add_user('omar')
     add_user_to_group('omar', 'managers')
 
     # create users
-    add_user('lara')
     add_user('rawad')
-    add_user('dinesh')
-    add_user('abbas')
-    add_user('kabbas')
+    add_user_to_group('rawad', 'users')
+    # add_user('lara')
+    # add_user_to_group('lara', 'users')
+    # add_user('dinesh')
+    # add_user_to_group('dinesh', 'users')
+    # add_user('abbas')
+    # add_user_to_group('abbas', 'users')
+    # add_user('kabbas')
+    # add_user_to_group('kabbas', 'users')
+
+    print('fixtures added')

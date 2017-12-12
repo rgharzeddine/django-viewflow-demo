@@ -55,6 +55,9 @@ class DailyTimesheet(Model):
         on_delete=CASCADE,
         related_name='approvals')
 
+    def is_approved(self):
+        return self.approval_status == 'approved'
+
 
 class DailyTimesheetApproval(Process):
 

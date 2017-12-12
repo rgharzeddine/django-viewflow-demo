@@ -132,4 +132,4 @@ AUTH_PROFILE_MODULE = 'auth.User'
 
 DATE_INPUT_FORMAT = ['%Y-%m-%d']
 
-LOGIN_URL = 'index'
+# LOGIN_URL = 'index'

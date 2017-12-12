@@ -8,7 +8,7 @@ from . import models
 class DailyTimesheetTable(tables.Table):
     """table class to display attachments"""
 
-    delete_column = TemplateColumn(
+    actions_column = TemplateColumn(
         "No actions",
         # """<a href="{% url 'update_daily' record.pk %}"
         #     class="btn btn-sm btn-primary">
@@ -60,7 +60,7 @@ class DailyTimesheetTable(tables.Table):
             'approval_status',
             'approved_by',
             'approved_at',
-            # 'delete_column',
+            # 'actions_column',
         )
         attrs = {'class': 'table table-bordered '}
 
@@ -68,8 +68,9 @@ class DailyTimesheetTable(tables.Table):
 class TaskTable(tables.Table):
     """table class to display attachments"""
 
-    delete_column = TemplateColumn(
-        "No actions",
+    actions_column = TemplateColumn(
+        "process: {{record.process.pk}} Task: {{record.pk}}",
+
         # """<a href="{% url 'update_daily' record.pk %}"
         #     class="btn btn-sm btn-primary">
         #     <i class="fa fa-edit"></i>&nbsp; Modify
@@ -108,6 +109,48 @@ class TaskTable(tables.Table):
             'created',
             'status',
             'owner',
-            # 'delete_column',
+            # 'actions_column',
+        )
+        attrs = {'class': 'table table-bordered '}
+
+
+class ProcessTable(tables.Table):
+    """table class to display attachments"""
+
+    actions_column = TemplateColumn(
+        "No actions",
+        # """<a href="{% url 'update_daily' record.pk %}"
+        #     class="btn btn-sm btn-primary">
+        #     <i class="fa fa-edit"></i>&nbsp; Modify
+        #     </a>
+        # """,
+        verbose_name='Actions',
+        orderable=False,
+    )
+    created = Column(
+        verbose_name='Created at',
+        orderable=False,
+        accessor='created',
+    )
+    finished = Column(
+        verbose_name='Finished at',
+        orderable=False,
+        accessor='finished',
+    )
+    status = Column(
+        verbose_name='Status',
+        orderable=False,
+        accessor='status',
+    )
+
+    class Meta:
+        """Meta Attributes"""
+        orderable = False
+        model = Process
+        fields = (
+            'created',
+            'finished',
+            'status',
+            # 'actions_column',
         )
         attrs = {'class': 'table table-bordered '}

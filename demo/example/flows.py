@@ -1,13 +1,13 @@
 from viewflow import flow, lock
 from viewflow.base import this, Flow
-from viewflow.flow.views import CreateProcessView, UpdateProcessView
+# from viewflow.flow.views import UpdateProcessView
 
 from django.contrib.auth.models import User
 # from viewflow.decorators import flow_start_func
 
 # from .models import DailyTimesheet
 from .models import DailyTimesheetApproval
-from .views import FillProcessView
+from .views import FillProcessView, ApproveDailyTimesheetView
 
 # @flow_start_func
 # def create_flow(activation, **kwargs):
@@ -16,9 +16,18 @@ from .views import FillProcessView
 #     return activation
 
 
-def approval_assign(activation):
-    #
+def approve_assign(activation):
+    # return user by permissions
     return User.objects.get(username='omar')
+
+
+def fill_assign(activation):
+    # assign same user
+    return User.objects.get(username='rawad')
+
+
+def check_approved(this_flow):
+    return this_flow.task.process.sheet.is_approved()
 
 
 class DailyTimesheetApprovalFlow(Flow):
@@ -31,30 +40,31 @@ class DailyTimesheetApprovalFlow(Flow):
 
     start = flow.Start(
         fields=['name'],
-    ).Next(this.fill)
+    ).Next(this.fill).Permission('auth.no_permission')
 
     fill = (
         flow.View(
-            # CreateDailyTimesheetView,
             FillProcessView,
             # fields=['date', 'code'],
             task_title='Fill Daily Timesheet')
+        .Permission('auth.no_permission')
+        .Assign(fill_assign)
         .Next(this.approve)
     )
 
     approve = (
         flow.View(
-            # ApproveDailyTimesheetView,
-            UpdateProcessView,
-            fields=['approval_status'])
+            ApproveDailyTimesheetView,
+            # UpdateProcessView,
+            # fields=['sheet.approval_status']
+        )
         .Permission('auth.can_approve')
-        .Assign(approval_assign)
+        .Assign(approve_assign)
         .Next(this.check_approval)
     )
 
     check_approval = (
-        flow.If(
-            lambda approval: approval.approval_status == 'approved')
+        flow.If(check_approved)
         .Then(this.end)
         .Else(this.fill)
     )

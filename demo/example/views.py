@@ -12,21 +12,21 @@ from django.contrib.auth.models import User
 #     # PermissionRequiredMixin,
 #     LoginRequiredMixin,
 # )
-from django.views.generic.edit import FormView
-from django.views.generic import ListView
+# from django.views.generic.edit import FormView
+from django.views.generic import ListView, UpdateView
 
 # from django.views.generic import ListView, CreateView, UpdateView
 from django_tables2 import SingleTableMixin
 
-from viewflow.flow.views import UpdateProcessView, CreateProcessView
+from viewflow.flow.views import UpdateProcessView
 
-from .models import DailyTimesheet, DailyTimesheetApproval
+from .models import DailyTimesheet
 
 from . import tables
 from . import forms
 
 from viewflow.models import Process, Task
-#  coerce_to_related_instance
+
 
 def fast_login(request):
     """Provides the ability to quickly switch between test users"""
@@ -62,32 +62,50 @@ def home(request):
     return render(request, 'index.html', context)
 
 
-class FillProcessView(CreateProcessView):
+class FillProcessView(UpdateProcessView):
     form_class = forms.FillDailyTimesheetForm
     model = DailyTimesheet
 
     def get_success_url(self):
         return reverse_lazy('index')
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         """Return the process for the task activation."""
-        return self.activation.process
+        return self.activation.process.sheet
 
     def form_valid(self, form):
-        approval = form.save(commit=False)
-        timesheetform = forms.FillDailyTimesheetForm(
-            form.data,
-        )
-        sheet = timesheetform.save(commit=False)
+        sheet = form.save(commit=False)
         sheet.for_user = self.request.user
         sheet.save()
 
+        approval = self.activation.process
         approval.sheet = sheet
         approval.save()
 
-        return super(FillProcessView, self).form_valid(form)
+        if '_continue' in form.data.keys():
+            return super(FillProcessView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
 
-        # return redirect(self.get_success_url())
+
+class ApproveDailyTimesheetView(UpdateProcessView):
+    form_class = forms.ApproveDailyTimesheetForm
+    model = DailyTimesheet
+
+    def get_success_url(self):
+        return reverse_lazy('index')
+
+    def get_object(self):
+        return self.activation.process.sheet
+
+    def form_valid(self, form):
+        sheet = form.save(commit=False)
+        sheet.approved_by = self.request.user
+        sheet.approved_at = datetime.now()
+        sheet.save()
+
+        if '_continue' in form.data.keys():
+            return super(ApproveDailyTimesheetView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
 
 
 class DailyTimesheetListView(SingleTableMixin, ListView):
@@ -110,9 +128,31 @@ class TaskListView(SingleTableMixin, ListView):
     context_table_name = 'tasks_table'
 
     def get_queryset(self):
+
         user = self.request.user
-        if user.has_perm('auth.can_approve'):
-            return Task.objects.all()
+        # filters NEW, DONE
+        filter_by = self.request.GET.get('filter', '').upper()
+
+        # if user.has_perm('auth.can_approve'):
+        #     if filter_by:
+        #         return Task.objects.filter(status=filter_by)
+        #     return Task.objects.all()
+        if filter_by:
+            return Task.objects.filter(owner=user, status=filter_by)
         return Task.objects.filter(owner=user)
 
-    # implement filter by started ,completed
+
+class ProcessListView(SingleTableMixin, ListView):
+    template_name = 'example/process_list.html'
+    model = Process
+    table_class = tables.ProcessTable
+    context_object_name = 'processes'
+    context_table_name = 'processes_table'
+
+    def get_queryset(self):
+        # filters NEW, DONE
+        filter_by = self.request.GET.get('filter', '').upper()
+
+        if filter_by:
+            return Process.objects.filter(status=filter_by)
+        return Process.objects.all()

@@ -4,11 +4,13 @@
 
 
 {% block title %}
-Dashboard
+Welcome
 {% endblock %}
 
 {% block title_note %}
-available actions
+{% if user.is_authenticated %}
+    {{user.username}}
+{% endif %}
 {% endblock %}
 
 {% block main_content %}
@@ -17,11 +19,7 @@ available actions
     <div class="col-md-10">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Welcome 
-                    <strong>
-                        {{user.username}}
-                    </strong>
-                </h3>
+                <h3 class="box-title">Models</h3>
             </div>
             <div class="box-body actions">
                 <ul>
@@ -30,6 +28,15 @@ available actions
                             <span class="glyphicon glyphicon-time"></span> View Latest timesheets
                         </a>
                     </li>
+                </ul>
+            </div>
+        </div>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Workflows</h3>
+            </div>
+            <div class="box-body actions">
+                <ul>
                     <li>
                         <a href="{% url 'wf:start' %}">
                             <span class="glyphicon glyphicon-edit"></span> Fill a daily timesheet

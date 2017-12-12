@@ -15,32 +15,14 @@ urlpatterns = [
     url(r'^$', views.home, name='index'),
     url(r'^fast_login$', views.fast_login, name='fast_login'),
     url(r'^fast_logout$', views.fast_logout, name='fast_logout'),
-    # url(r'^timesheet/add$', views.DailyTimesheetCreateView.as_view(),
-    #     name='add_daily'),
-    # url(r'^timesheet/(?P<pk>\d+)/$', views.DailyTimesheetUpdateView.as_view(),
-    #     name='update_daily'),
     url(r'^timesheet$', views.DailyTimesheetListView.as_view(),
         name='timesheets'),
 
     url(r'^task$', views.TaskListView.as_view(),
         name='tasks'),
+    url(r'^process$', views.ProcessListView.as_view(),
+        name='processes'),
 
     url(r'^daily/', include(sheet_urls, namespace='wf')),
-
-    # url(r'^daily/start/',
-    #     views.CreateDailyTimesheetView.as_view(),
-    #     dict(
-    #         flow_class=DailyTimesheetApprovalFlow,
-    #         flow_task=DailyTimesheetApprovalFlow.start,
-    #     ),
-    #     name='start_daily'),
-
-    # url(r'^daily/approve/',
-    #     views.ApproveDailyTimesheetView.as_view(),
-    #     dict(
-    #         flow_class=DailyTimesheetApprovalFlow,
-    #         flow_task=DailyTimesheetApprovalFlow.approve,
-    #     ),
-    #     name='approve_daily'),
 
 ]
