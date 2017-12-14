@@ -25,7 +25,12 @@ Welcome
                 <ul>
                     <li>
                         <a href="{% url 'example:timesheets' %}">
-                            <span class="glyphicon glyphicon-time"></span> View Latest timesheets
+                            <span class="glyphicon glyphicon-time"></span> View timesheets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'example:vacations' %}">
+                            <span class="fa fa-plane"></span> View vacations
                         </a>
                     </li>
                 </ul>
@@ -60,22 +65,22 @@ Welcome
                 <ul>
                     <li>
                         <a href="{% url 'example:daily:tasks' %}">
-                            <span class="glyphicon glyphicon-edit"></span> View my tasks (daily)
+                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (daily)
                         </a>
                     </li>
                     <li>
                         <a href="{% url 'example:vacation:tasks' %}">
-                            <span class="glyphicon glyphicon-edit"></span> View my tasks (vacation)
+                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (vacation)
                         </a>
                     </li>
                     <li>
                         <a href="{% url 'example:tasks' %}?filter=-done">
-                            <span class="glyphicon glyphicon-edit"></span> View my tasks (not done)
+                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (not done)
                         </a>
                     </li>
                     <li>
                         <a href="{% url 'example:tasks' %}?filter=done">
-                            <span class="glyphicon glyphicon-edit"></span> View my tasks (done)
+                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (done)
                         </a>
                     </li>
                 </ul>

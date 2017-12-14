@@ -1,0 +1,4 @@
+Django==1.11
+django-filter==1.1.0
+django-viewflow==1.1.0
+pytz==2017.3

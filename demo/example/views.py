@@ -6,16 +6,14 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-# from django.contrib.auth.decorators import login_required
 
 # from django.contrib.auth.mixins import (
 #     # PermissionRequiredMixin,
 #     LoginRequiredMixin,
 # )
-# from django.views.generic.edit import FormView
-from django.views.generic import ListView, UpdateView
 
-# from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, UpdateView
+from django.views.generic.base import View
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
 
@@ -228,7 +226,7 @@ class ApproveVacationView(UpdateProcessView):
 class TaskListView(ListView):
     template_name = 'example/task_list.html'
     model = Task
-    context_object_name = 'task_list'
+    context_object_name = 'tasks'
 
     def get_queryset(self):
 
@@ -252,11 +250,27 @@ class TaskListView(ListView):
 class ProcessListView(ListView):
     template_name = 'example/process_list.html'
     model = Process
+    context_object_name = 'processes'
 
     def get_queryset(self):
-        # filters NEW, DONE
         filter_by = self.request.GET.get('filter', '').upper()
 
+        if filter_by.startswith('-'):
+            exclude = True
+            filter_by = filter_by[1:]
+        else:
+            exclude = False
+
         if filter_by:
+            if exclude:
+                return Process.objects.exclude(
+                    status=filter_by)
             return Process.objects.filter(status=filter_by)
         return Process.objects.all()
+
+
+class ProcessClassesListView(View):
+    template_name = 'example/process_class_list.html'
+
+    def get(self, request):
+        return render(request, self.template_name, context={})

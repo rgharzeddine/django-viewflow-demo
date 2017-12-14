@@ -24,6 +24,12 @@ Enter a daily timesheet
                 </div>
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Create</button>
+                    <a href="{% url 'example:timesheets' %}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-time"></span> View timesheets
+                    </a>
+                    <a href="{% url 'example:index' %}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-home"></span> Home
+                    </a>
                     <!-- <button type="submit" name="_start" class="btn btn-default">Start</button> -->
                 </div>
             </form>

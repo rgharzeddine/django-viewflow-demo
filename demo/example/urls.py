@@ -6,8 +6,8 @@ from django.conf.urls import url, include
 # from django.views.generic import TemplateView
 
 from . import views
-
 from .flows import DailyTimesheetApprovalFlow, VacationApprovalFlow
+
 sheet_urls = FlowViewSet(DailyTimesheetApprovalFlow).urls
 vacation_urls = FlowViewSet(VacationApprovalFlow).urls
 
@@ -22,8 +22,11 @@ urlpatterns = [
 
     url(r'^task$', views.TaskListView.as_view(),
         name='tasks'),
-    # url(r'^process$', views.ProcessListView.as_view(),
-    #     name='processes'),
+
+    url(r'^process$', views.ProcessListView.as_view(),
+        name='processes'),
+    url(r'^process_classes$', views.ProcessClassesListView.as_view(),
+        name='process_classes'),
 
     url(r'^daily/', include(sheet_urls, namespace='daily')),
     url(r'^vacation/', include(vacation_urls, namespace='vacation')),

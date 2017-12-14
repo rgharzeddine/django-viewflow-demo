@@ -16,57 +16,48 @@
     <ul class="sidebar-menu">
         <li class="header">Personal</li>
         <li><a href="{% url 'example:index' %}"><i class="fa fa-home"></i> <span>Home</span></a></li>
-    {% comment "removed" %}
         {% if user.is_authenticated %}
         <li class="treeview">
             <a href="#">
-                <i class="fa fa-calendar"></i> <span>Processes</span>
+                <i class="fa fa-random"></i> <span>Processes</span>
                 <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                 </span>
             </a>
             <ul class="treeview-menu">
-                <li><a href="{% url 'example:processes' %}"><i class="fa fa-dot-circle-o"></i>All</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=NEW"><i class="fa fa-circle"></i>New</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=STARTED"><i class="fa fa-circle"></i>Started</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=ASSIGNED"><i class="fa fa-circle"></i>Assigned</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=DONE"><i class="fa fa-circle"></i>Done</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=CANCELED"><i class="fa fa-circle"></i>Canceled</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=PREPARED"><i class="fa fa-circle"></i>Prepared</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=SCHEDULED"><i class="fa fa-circle"></i>Scheduled</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=ERROR"><i class="fa fa-circle"></i>Error</a></li>
-                <li><a href="{% url 'example:processes' %}?filter=UNRIPE"><i class="fa fa-circle"></i>Unripe</a></li>
+                <li><a href="{% url 'example:process_classes' %}"><i class="fa fa-dot-circle-o"></i>Classes</a></li>
+                <li><a href="{% url 'example:processes' %}?filter=-done"><i class="fa fa-circle"></i>In progress</a></li>
+                <li><a href="{% url 'example:processes' %}?filter=done"><i class="fa fa-check-circle"></i>Completed</a></li>
             </ul>
         </li>
         {% endif %}
-    {% endcomment %}
         {% if user.is_authenticated %}
         <li class="treeview">
             <a href="#">
-                <i class="fa fa-tasks"></i> <span>Tasks</span>
+                <i class="fa fa-tasks"></i> <span>My Tasks</span>
                 <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                 </span>
             </a>
             <ul class="treeview-menu">
                 <li>
-                    <a href="{% url 'example:tasks' %}?filter=-done">
+                    <a href="{% url 'example:tasks' %}?filter=new">
                         <i class="fa fa-circle-o"></i>
-                        Active
+                        Unassigned
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'example:tasks' %}?filter=-done">
+                        <i class="fa fa-circle"></i>
+                        In progress
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'example:tasks' %}?filter=done">
-                        <i class="fa fa-circle"></i>
-                        Done
+                        <i class="fa fa-check-circle"></i>
+                        Completed
                     </a>
                 </li>
-<!--                 <li><a href="{% url 'example:tasks' %}"><i class="fa fa-dot-circle-o"></i>All</a></li>
-                <li><a href="{% url 'example:tasks' %}?filter=NEW"><i class="fa fa-circle"></i>New</a></li>
-                <li><a href="{% url 'example:tasks' %}?filter=ASSIGNED"><i class="fa fa-circle"></i>Assigned</a></li>
-                <li><a href="{% url 'example:tasks' %}?filter=STARTED"><i class="fa fa-circle"></i>Started</a></li>
-                <li><a href="{% url 'example:tasks' %}?filter=DONE"><i class="fa fa-circle"></i>Done</a></li>
- -->
             </ul>
         </li>
         {% endif %}

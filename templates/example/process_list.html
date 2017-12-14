@@ -11,7 +11,31 @@ My Processes
         <h3 class="box-title">User Processes</h3>
     </div>
     <div class="box-body">
+        {% if processes %}
+        <table class="table table-bordered ">
+            <thead>
+                <tr>
+                    <th> Process </th>
+                    <th> Created </th>
+                    <th> Finished </th>
+                    <th> Status </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for process in processes %}
+                <tr>
+                    <td>{{ process.flow_class }}</td>
+                    <td>{{ process.created }}</td>
+                    <td>{{ process.finished }}</td>
+                    <td>{{ process.status }}</td>
+                </tr>
+                {% endfor %}
 
+            </tbody>
+        </table>
+        {% else %}
+            No processes !
+        {% endif %}
     </div>
     <div class="box-footer">
         <a href="{% url 'example:index' %}" class="btn btn-default">
