@@ -4,7 +4,7 @@
 
 
 {% block title %}
-Enter a daily timesheet
+Request a vacation
 {% endblock %}
 
 {% block main_content %}
@@ -13,10 +13,10 @@ Enter a daily timesheet
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">
-                    Create daily timesheet
+                    Create a vacation request
                 </h3>
             </div>
-            <form action="." method="post" class="form form-inline">
+            <form action="." method="post" class="form">
                 <div class="box-body actions">
                     {% csrf_token %}
                     {{ form }}

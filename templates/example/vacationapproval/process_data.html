@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %}
+Process
+{% endblock %}
+
+{% block title_note %}
+detail
+{% endblock %}
+
+{% block main_content %}
+<form action="." method="post" class="form form-inline">
+    {% csrf_token %}
+    {{ form }}
+    {{ activation.management_form }}
+    <button type="submit" name="_continue" class="btn btn-primary">Start</button>
+    <!-- <button type="submit" name="_start" class="btn btn-default">Start</button> -->
+</form>
+{% endblock main_content %}

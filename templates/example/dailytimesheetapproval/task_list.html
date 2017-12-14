@@ -1,16 +1,15 @@
 {% extends 'index.html' %}
 {% load viewflow %}
-{% load tags %}
 
 {% block title %}
-My Tasks
+Task List
 {% endblock %}
 
 {% block main_content %}
 <div class="box box-primary">
     <div class="box-header with-border">
         <i class="fa fa-black-tie"></i>
-        <h3 class="box-title">User Tasks</h3>
+        <h3 class="box-title">My Tasks</h3>
     </div>
     <div class="box-body">
         <table class="table table-bordered ">
@@ -19,14 +18,13 @@ My Tasks
                     <th>Reference</th>
                     <th>Created At</th>
                     <th>Details </th>
-                    <th>Status </th>
                     <th>Comments</th>
                 </tr>
             </thead>
         <tbody>
             
         {% for task in task_list %}
-        {% get_task_url task as task_url %}
+        {% flowurl task user=request.user as task_url %}
         <tr>
           <td>
             {% if task_url %}
@@ -37,7 +35,6 @@ My Tasks
           </td>
           <td>{{ task.created }}</td>
           <td>{{ task.flow_process }}</td>
-          <td>{{ task.status }}</td>
           <td>{{ task.comments }}</td>
         </tr>
         {% empty %}

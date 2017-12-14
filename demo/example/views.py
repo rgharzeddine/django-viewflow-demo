@@ -16,13 +16,11 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, UpdateView
 
 # from django.views.generic import ListView, CreateView, UpdateView
-from django_tables2 import SingleTableMixin
 
-from viewflow.flow.views import UpdateProcessView
+from viewflow.flow.views import UpdateProcessView, CreateProcessView
 
-from .models import DailyTimesheet
+from .models import DailyTimesheet, Vacation
 
-from . import tables
 from . import forms
 
 from viewflow.models import Process, Task
@@ -41,14 +39,14 @@ def fast_login(request):
         )
         if user:
             login(request, user)
-    return redirect(reverse_lazy('index'))
+    return redirect(reverse_lazy('example:index'))
 
 
 def fast_logout(request):
     """Provides the ability to quickly switch between test users"""
     if request.user:
         logout(request)
-    return redirect(reverse_lazy('index'))
+    return redirect(reverse_lazy('example:index'))
 
 
 def home(request):
@@ -62,12 +60,13 @@ def home(request):
     return render(request, 'index.html', context)
 
 
-class FillProcessView(UpdateProcessView):
+# daily timesheet flow views
+class StartDailyTimesheetProcessView(CreateProcessView):
     form_class = forms.FillDailyTimesheetForm
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('index')
+        return reverse_lazy('example:index')
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -83,7 +82,32 @@ class FillProcessView(UpdateProcessView):
         approval.save()
 
         if '_continue' in form.data.keys():
-            return super(FillProcessView, self).form_valid(form)
+            return super(StartDailyTimesheetProcessView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
+
+
+class FillDailyTimesheetView(UpdateProcessView):
+    form_class = forms.FillDailyTimesheetForm
+    model = DailyTimesheet
+
+    def get_success_url(self):
+        return reverse_lazy('example:index')
+
+    def get_object(self, queryset=None):
+        """Return the process for the task activation."""
+        return self.activation.process.sheet
+
+    def form_valid(self, form):
+        sheet = form.save(commit=False)
+        sheet.for_user = self.request.user
+        sheet.save()
+
+        approval = self.activation.process
+        approval.sheet = sheet
+        approval.save()
+
+        if '_continue' in form.data.keys():
+            return super(FillDailyTimesheetView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
 
@@ -92,7 +116,7 @@ class ApproveDailyTimesheetView(UpdateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('index')
+        return reverse_lazy('example:index')
 
     def get_object(self):
         return self.activation.process.sheet
@@ -108,46 +132,126 @@ class ApproveDailyTimesheetView(UpdateProcessView):
         return super(UpdateView, self).form_valid(form)
 
 
-class DailyTimesheetListView(SingleTableMixin, ListView):
+class DailyTimesheetListView(ListView):
     template_name = 'example/dailytimesheet_list.html'
     model = DailyTimesheet
-    table_class = tables.DailyTimesheetTable
     context_object_name = 'sheets'
-    context_table_name = 'sheets_table'
 
     def get_queryset(self):
         user = self.request.user
         return DailyTimesheet.objects.filter(for_user=user)
 
 
-class TaskListView(SingleTableMixin, ListView):
+class VacationListView(ListView):
+    template_name = 'example/vacation_list.html'
+    model = Vacation
+    context_object_name = 'vacations'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Vacation.objects.filter(for_user=user)
+
+
+# vacation flow views
+class StartVacationProcessView(CreateProcessView):
+    form_class = forms.FillVacationForm
+    model = Vacation
+
+    def get_success_url(self):
+        return reverse_lazy('example:index')
+
+    def get_object(self, queryset=None):
+        """Return the process for the task activation."""
+        return self.activation.process.vacation
+
+    def form_valid(self, form):
+        vacation = form.save(commit=False)
+        vacation.for_user = self.request.user
+        vacation.save()
+
+        approval = self.activation.process
+        approval.vacation = vacation
+        approval.save()
+
+        if '_continue' in form.data.keys():
+            return super(StartVacationProcessView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
+
+
+class FillVacationView(UpdateProcessView):
+    form_class = forms.FillVacationForm
+    model = Vacation
+
+    def get_success_url(self):
+        return reverse_lazy('example:index')
+
+    def get_object(self, queryset=None):
+        """Return the process for the task activation."""
+        return self.activation.process.vacation
+
+    def form_valid(self, form):
+        vacation = form.save(commit=False)
+        vacation.for_user = self.request.user
+        vacation.save()
+
+        approval = self.activation.process
+        approval.vacation = vacation
+        approval.save()
+
+        if '_continue' in form.data.keys():
+            return super(FillVacationView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
+
+
+class ApproveVacationView(UpdateProcessView):
+    form_class = forms.ApproveVacationForm
+    model = Vacation
+
+    def get_success_url(self):
+        return reverse_lazy('example:index')
+
+    def get_object(self):
+        return self.activation.process.vacation
+
+    def form_valid(self, form):
+        vacation = form.save(commit=False)
+        vacation.approved_by = self.request.user
+        vacation.approved_at = datetime.now()
+        vacation.save()
+
+        if '_continue' in form.data.keys():
+            return super(ApproveVacationView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
+
+
+# Flow tasks and processes
+class TaskListView(ListView):
     template_name = 'example/task_list.html'
     model = Task
-    table_class = tables.TaskTable
-    context_object_name = 'tasks'
-    context_table_name = 'tasks_table'
+    context_object_name = 'task_list'
 
     def get_queryset(self):
 
         user = self.request.user
-        # filters NEW, DONE
         filter_by = self.request.GET.get('filter', '').upper()
 
-        # if user.has_perm('auth.can_approve'):
-        #     if filter_by:
-        #         return Task.objects.filter(status=filter_by)
-        #     return Task.objects.all()
+        if filter_by.startswith('-'):
+            exclude = True
+            filter_by = filter_by[1:]
+        else:
+            exclude = False
+
         if filter_by:
+            if exclude:
+                return Task.objects.filter(owner=user).exclude(
+                    status=filter_by)
             return Task.objects.filter(owner=user, status=filter_by)
         return Task.objects.filter(owner=user)
 
 
-class ProcessListView(SingleTableMixin, ListView):
+class ProcessListView(ListView):
     template_name = 'example/process_list.html'
     model = Process
-    table_class = tables.ProcessTable
-    context_object_name = 'processes'
-    context_table_name = 'processes_table'
 
     def get_queryset(self):
         # filters NEW, DONE

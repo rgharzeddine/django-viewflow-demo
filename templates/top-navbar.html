@@ -1,6 +1,6 @@
 {% load static %}
 
-<a href="{% url 'index' %}" class="logo">
+<a href="{% url 'example:index' %}" class="logo">
     <span class="logo-mini"><b>R</b>.TS</span>
     <span class="logo-lg"><b>Viewflow </b>demo</span>
 </a>
@@ -30,7 +30,7 @@
                         {% endfor %}
                     </ul>
                 </li>
-                <form style="display:none" id="userswitchform" method="post"  action="{% url 'fast_login' %}">
+                <form style="display:none" id="userswitchform" method="post"  action="{% url 'example:fast_login' %}">
                     {% csrf_token %}
                     <input id="username" name="username" type="hidden"/>
                 </form>
@@ -43,7 +43,7 @@
                     <ul class="dropdown-menu">
                         <li><a role="menuitem" tabindex="-1" href="#">Profile</a></li> 
                         <li role="separator" class="divider"></li>
-                        <li><a href="{% url 'fast_logout' %}">Logout</a></li>
+                        <li><a href="{% url 'example:fast_logout' %}">Logout</a></li>
                     </ul>
                 </li>
             {% endif %}

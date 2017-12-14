@@ -3,9 +3,9 @@
 {% block title %}
 
 {% if approving %}
-Timesheets
+Vacations
 {% else %}
-My Timesheets
+My Vacations
 {% endif %}
 
 {% endblock %}
@@ -14,15 +14,16 @@ My Timesheets
 <div class="box box-primary">
     <div class="box-header with-border">
         <i class="fa fa-black-tie"></i>
-        <h3 class="box-title">User Daily Timesheets</h3>
+        <h3 class="box-title">Vacations</h3>
     </div>
     <div class="box-body">
-        {% if sheets %}
+        {% if vacations %}
             <table class="table table-bordered ">
                 <thead>
                     <tr>
-                        <th> Date </th>
-                        <th> Code </th>
+                        <th> Start Date </th>
+                        <th> End Date </th>
+                        <th> Details </th>
                         <th> For User </th>
                         <th> Approval Status </th>
                         <th> Approved By </th>
@@ -30,27 +31,28 @@ My Timesheets
                     </tr>
                 </thead>
                 <tbody>
-                    {% for sheet in sheets %}
+                    {% for vacation in vacations %}
                     <tr>
-                        <td>{{ sheet.date }}</td>
-                        <td>{{ sheet.code }}</td>
-                        <td>{{ sheet.for_user.username }}</td>
-                        <td>{{ sheet.approval_status }}</td>
-                        <td>{{ sheet.approved_by.username }}</td>
-                        <td>{{ sheet.approved_at }}</td>
+                        <td>{{ vacation.start_date }}</td>
+                        <td>{{ vacation.end_date }}</td>
+                        <td>{{ vacation.details }}</td>
+                        <td>{{ vacation.for_user.username }}</td>
+                        <td>{{ vacation.approval_status }}</td>
+                        <td>{{ vacation.approved_by.username }}</td>
+                        <td>{{ vacation.approved_at }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
         <p>
-            You have no daily timesheets
+            You have no vacation requests
         </p>
         {% endif %}
     </div>
     <div class="box-footer">
-        <a href="{% url 'example:daily:start' %}" class="btn btn-default">
-            <span class="glyphicon glyphicon-edit"></span> Fill a timesheet
+        <a href="{% url 'example:vacation:start' %}" class="btn btn-default">
+            <span class="glyphicon glyphicon-edit"></span> Fill a vacation request
         </a>        
         <a href="{% url 'example:index' %}" class="btn btn-default">
             <span class="glyphicon glyphicon-home"></span> Home

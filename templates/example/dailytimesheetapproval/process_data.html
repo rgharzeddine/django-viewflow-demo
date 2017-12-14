@@ -2,19 +2,21 @@
 
 {% load static %}
 
+
 {% block title %}
-Assign task
+Process
 {% endblock %}
 
 {% block title_note %}
-available actions
+detail
 {% endblock %}
 
 {% block main_content %}
-<form action="." method="post">
+<form action="." method="post" class="form form-inline">
     {% csrf_token %}
     {{ form }}
     {{ activation.management_form }}
-    <input type="submit" value="Assign">
+    <button type="submit" name="_continue" class="btn btn-primary">Start</button>
+    <!-- <button type="submit" name="_start" class="btn btn-default">Start</button> -->
 </form>
 {% endblock main_content %}

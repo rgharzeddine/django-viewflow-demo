@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Fill Timesheet
+Approve Vacation
 {% endblock %}
 
 {% block main_content %}
@@ -12,17 +12,21 @@ Fill Timesheet
     <div class="col-md-10">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Update my timesheet</h3>
+                <h3 class="box-title">Approve a Vacation</h3>
             </div>
             <div class="box-body">
-                <form action="." method="post" class="form form-inline">
+                <form method="post" class="form form-inline">
                     {% csrf_token %}
                     {{ form }}
                     {{ activation.management_form }}
                 </div>
                 <div class="box-footer">
-                    <button type="submit" name="_continue" class="btn btn-primary">Update</button>
-                    <!-- <input type="submit" value="Save" class="btn btn-primary"> -->
+                    <input type="submit" name="_start" value="Save" class="btn btn-primary">
+                    <input type="submit" name="_continue" value="Approve" class="btn btn-primary">
+                    
+                    <a href="{% url 'example:timesheets' %}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-time"></span> View latest vacations (goes to timesheets)
+                    </a>
                     <a href="{% url 'example:index' %}" class="btn btn-default">
                         <span class="glyphicon glyphicon-home"></span> Home
                     </a>

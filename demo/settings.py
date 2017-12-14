@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'viewflow',
     'demo.example',
     'crispy_forms',
-    'django_tables2',
 ]
 
 MIDDLEWARE = [
@@ -132,4 +131,4 @@ AUTH_PROFILE_MODULE = 'auth.User'
 
 DATE_INPUT_FORMAT = ['%Y-%m-%d']
 
-# LOGIN_URL = 'index'
+# LOGIN_URL = 'example:index'

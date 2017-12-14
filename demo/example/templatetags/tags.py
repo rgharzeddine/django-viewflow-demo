@@ -1,11 +1,22 @@
-# from django import template
-# from demo.example.models import DailyTimesheet
-
-# register = template.Library()
+from django import template
+register = template.Library()
 
 
-# @register.inclusion_tag('example/user_dailytimesheets.html')
-# def user_dailytimesheets(user):
-#     """returns user daily timesheets"""
-#     context = {'sheets': DailyTimesheet.objects.filter(user=user)}
-#     return context
+@register.simple_tag
+def get_task_url(task):
+    label = task.process.flow_class.flow_label
+    if task.status.lower() == 'done':
+        return '{}/{}/{}/{}/detail'.format(
+            label,
+            task.process_id,
+            str(task.flow_task).lower(),
+            task.id,
+        )
+
+    return '{}/{}/{}/{}'.format(
+        label,
+        task.process_id,
+        str(task.flow_task).lower(),
+        task.id,
+    )
+    # return '.'

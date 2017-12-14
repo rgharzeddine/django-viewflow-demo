@@ -53,7 +53,7 @@ class DailyTimesheet(Model):
         blank=True,
         null=True,
         on_delete=CASCADE,
-        related_name='approvals')
+        related_name='timesheet_approvals')
 
     def is_approved(self):
         return self.approval_status == 'approved'
@@ -67,14 +67,56 @@ class DailyTimesheetApproval(Process):
         null=True,
         related_name='approval')
 
-    name = CharField(
-        max_length=50,
+    def __str__(self):
+        return 'Daily timesheet approval for {} on date {}'.format(
+            self.sheet.for_user.username,
+            self.sheet.date,
+        )
+
+
+class Vacation(Model):
+
+    for_user = ForeignKey(User, on_delete=CASCADE, related_name='vacations')
+    start_date = DateField()
+    end_date = DateField()
+    requested_on = DateField(auto_now=True)
+    details = CharField(max_length=300, default='vacation')
+
+    APPROVAL_STATUS = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    approval_status = CharField(
+        max_length=20,
+        choices=APPROVAL_STATUS,
+        default='pending',
     )
 
-    def __str__(self):
-        if self.name:
-            return self.name
-        return str(self.pk) + ' :D'
+    approved_at = DateTimeField(blank=True, null=True)
+    approved_by = ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=CASCADE,
+        related_name='vacation_approvals')
 
-    __repr__ = __str__
-    str = __str__
+    def is_approved(self):
+        return self.approval_status == 'approved'
+
+
+class VacationApproval(Process):
+
+    vacation = OneToOneField(
+        Vacation,
+        on_delete=CASCADE,
+        null=True,
+        related_name='approval')
+
+    def __str__(self):
+        return 'Vacation approval for {} starting {} and ending {}'.format(
+            self.vacation.for_user.username,
+            self.vacation.start_date,
+            self.vacation.end_date,
+        )

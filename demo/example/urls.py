@@ -7,9 +7,9 @@ from django.conf.urls import url, include
 
 from . import views
 
-from .flows import DailyTimesheetApprovalFlow
+from .flows import DailyTimesheetApprovalFlow, VacationApprovalFlow
 sheet_urls = FlowViewSet(DailyTimesheetApprovalFlow).urls
-
+vacation_urls = FlowViewSet(VacationApprovalFlow).urls
 
 urlpatterns = [
     url(r'^$', views.home, name='index'),
@@ -17,12 +17,15 @@ urlpatterns = [
     url(r'^fast_logout$', views.fast_logout, name='fast_logout'),
     url(r'^timesheet$', views.DailyTimesheetListView.as_view(),
         name='timesheets'),
+    url(r'^vacation$', views.VacationListView.as_view(),
+        name='vacations'),
 
     url(r'^task$', views.TaskListView.as_view(),
         name='tasks'),
-    url(r'^process$', views.ProcessListView.as_view(),
-        name='processes'),
+    # url(r'^process$', views.ProcessListView.as_view(),
+    #     name='processes'),
 
-    url(r'^daily/', include(sheet_urls, namespace='wf')),
+    url(r'^daily/', include(sheet_urls, namespace='daily')),
+    url(r'^vacation/', include(vacation_urls, namespace='vacation')),
 
 ]

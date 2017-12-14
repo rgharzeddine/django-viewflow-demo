@@ -13,6 +13,7 @@ django.setup()
 from demo import settings  # noqa
 from django.contrib.contenttypes.models import ContentType  # noqa
 from django.contrib.auth.models import User, Permission, Group  # noqa
+# from demo.example.models import DailyTimesheet, DailyTimesheetApproval
 
 
 def add_user(username):
@@ -50,10 +51,37 @@ def add_user_to_group(username, group_name):
     user.groups.add(group)
 
 
+def add_group_permissions_for_models(group_name, model_names):
+    group = Group.objects.get(name=group_name)
+    model_cts = ContentType.objects.filter(model__in=model_names)
+    assert len(model_cts) > 0
+    permissions = Permission.objects.filter(content_type__in=model_cts)
+    assert len(permissions) > 0
+    group.permissions.add(*permissions)
+
+
 if __name__ == '__main__':
+
     # create a managers group has approval permissions
     add_group('managers', ['can_approve'])
     add_group('users', ['no_permission'])
+
+    model_names = [
+        # 'logentry',
+        # 'permission',
+        # 'group',
+        # 'user',
+        # 'contenttype',
+        'session',
+        'process',
+        'task',
+        'dailytimesheet',
+        'dailytimesheetapproval',
+        'vacation',
+        'vacationapproval',
+    ]
+    add_group_permissions_for_models('managers', model_names)
+    add_group_permissions_for_models('users', model_names)
 
     # create a manager
     add_user('omar')
@@ -62,13 +90,9 @@ if __name__ == '__main__':
     # create users
     add_user('rawad')
     add_user_to_group('rawad', 'users')
-    # add_user('lara')
-    # add_user_to_group('lara', 'users')
-    # add_user('dinesh')
-    # add_user_to_group('dinesh', 'users')
-    # add_user('abbas')
-    # add_user_to_group('abbas', 'users')
-    # add_user('kabbas')
-    # add_user_to_group('kabbas', 'users')
+    add_user('lara')
+    add_user_to_group('lara', 'users')
+    add_user('dinesh')
+    add_user_to_group('dinesh', 'users')
 
     print('fixtures added')
