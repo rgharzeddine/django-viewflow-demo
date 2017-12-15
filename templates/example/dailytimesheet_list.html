@@ -49,12 +49,14 @@ My Timesheets
         {% endif %}
     </div>
     <div class="box-footer">
+        {% if perms.auth.no_permission %}
         <a href="{% url 'example:daily:start' %}" class="btn btn-default">
             <span class="glyphicon glyphicon-edit"></span> Fill a timesheet
-        </a>        
+        </a>
+        {% endif %}
         <a href="{% url 'example:index' %}" class="btn btn-default">
             <span class="glyphicon glyphicon-home"></span> Home
-        </a>        
+        </a>
     </div>
 </div>
 {% endblock main_content %}

@@ -137,6 +137,8 @@ class DailyTimesheetListView(ListView):
 
     def get_queryset(self):
         user = self.request.user
+        if user.has_perm('auth.can_approve'):
+            return DailyTimesheet.objects.all()
         return DailyTimesheet.objects.filter(for_user=user)
 
 
@@ -147,7 +149,9 @@ class VacationListView(ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Vacation.objects.filter(for_user=user)
+        if user.has_perm('auth.can_approve'):
+            return Vacation.objects.all().order_by('-start_date')
+        return Vacation.objects.filter(for_user=user).order_by('-start_date')
 
 
 # vacation flow views

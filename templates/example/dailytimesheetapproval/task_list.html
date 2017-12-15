@@ -12,6 +12,7 @@ Task List
         <h3 class="box-title">My Tasks</h3>
     </div>
     <div class="box-body">
+        {% if task_list %}
         <table class="table table-bordered ">
             <thead>
                 <tr>
@@ -21,30 +22,31 @@ Task List
                     <th>Comments</th>
                 </tr>
             </thead>
-        <tbody>
-            
-        {% for task in task_list %}
-        {% flowurl task user=request.user as task_url %}
-        <tr>
-          <td>
-            {% if task_url %}
-                <a href="{{ task_url }}">{{ task.process.pk }}/{{ task.pk }}</a>
-            {% else %}
-                {{ task.process.pk }}/{{ task.pk }}
-            {% endif %}
-          </td>
-          <td>{{ task.created }}</td>
-          <td>{{ task.flow_process }}</td>
-          <td>{{ task.comments }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4">No tasks assigned</td>
-        </tr>
-        {% endfor %}
+            <tbody>
 
-        </tbody>
+                {% for task in task_list %}
+                {% flowurl task user=request.user as task_url %}
+                <tr>
+                    <td>
+                        {% if task_url %}
+                        <a href="{{ task_url }}">{{ task.process.pk }}/{{ task.pk }}</a>
+                        {% else %}
+                        {{ task.process.pk }}/{{ task.pk }}
+                        {% endif %}
+                    </td>
+                    <td>{{ task.created }}</td>
+                    <td>{{ task.flow_process }}</td>
+                    <td>{{ task.comments }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
         </table>
+        {% else %}
+        <p>
+            No tasks !
+        </p>
+        {% endif %}
     </div>
     <div class="box-footer">
         <a href="{% url 'example:index' %}" class="btn btn-default">

@@ -47,10 +47,14 @@ Task
         <a href="{{ execute_url }}?{{ task }}" class="btn btn-primary">Execute</a>
         {% endif %}
 
-        {% flowurl activation.task 'detail' user=request.user as detail_url %}
-        {% if detail_url %}
-        <a href="{{ detail_url }}?{{ task }}" class="btn btn-primary">Details</a>
-        {% endif %}
+        {% comment 'do not show link to task details in task details' %}
+            {% flowurl activation.task 'detail' user=request.user as detail_url %}
+            {% if detail_url %}
+            <a href="{{ detail_url }}?{{ task }}" class="btn btn-primary">Details</a>
+            {% endif %}
+        {% endcomment %}
+        
+        <a href="{% url 'example:tasks' %}?filter=-done" class="btn btn-default">Tasks</a>
     </div>
 </div>
 
