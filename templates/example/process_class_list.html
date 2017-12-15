@@ -19,33 +19,40 @@ Process Classes
                 </tr>
             </thead>
             <tbody>
-                {% if perms.auth.no_permission %}
                 <tr>
                     <td>Daily Timesheet Approval</td>
                     <td>
+                        {% if perms.auth.no_permission %}
                         <a href="{% url 'example:daily:start' %}" class="btn btn-sm btn-primary">
                             <span class="fa fa-play-circle"> </span> Start
                         </a>
+                        {% else %}
+                        <a href="#" disabled class="btn btn-sm btn-primary">
+                            <span class="fa fa-play-circle"> </span> Start
+                        </a>
+                        {% endif %}
                     </td>
                 </tr>
-                
-                {% endif %}
-                {% if perms.auth.no_permission %}
                 <tr>
                     <td>Vacation Request</td>
                     <td>
+                        {% if perms.auth.no_permission %}
                         <a href="{% url 'example:vacation:start' %}" class="btn btn-sm btn-primary">
                             <span class="fa fa-play-circle"> </span> Start
                         </a>
+                        {% else %}
+                        <a href="#" disabled class="btn btn-sm btn-primary">
+                            <span class="fa fa-play-circle"> </span> Start
+                        </a>
+                        {% endif %}
                     </td>
                 </tr>
-                {% endif %}
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="2">
                         <strong>
-                            Processes are viewed according to user permissions
+                            Processes can be started according to user permissions
                         </strong>
                     </td>
                 </tr>

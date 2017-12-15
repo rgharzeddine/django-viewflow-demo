@@ -40,12 +40,14 @@
                 </span>
             </a>
             <ul class="treeview-menu">
+                {% if perms.auth.can_approve %}
                 <li>
                     <a href="{% url 'example:tasks' %}?filter=new">
                         <i class="fa fa-circle-o"></i>
                         Unassigned
                     </a>
                 </li>
+                {% endif %}
                 <li>
                     <a href="{% url 'example:tasks' %}?filter=-done">
                         <i class="fa fa-circle"></i>

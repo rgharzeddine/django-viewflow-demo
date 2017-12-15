@@ -83,9 +83,11 @@ if __name__ == '__main__':
     add_group_permissions_for_models('managers', model_names)
     add_group_permissions_for_models('users', model_names)
 
-    # create a manager
+    # create managers
     add_user('omar')
     add_user_to_group('omar', 'managers')
+    add_user('taha')
+    add_user_to_group('taha', 'managers')
 
     # create users
     add_user('rawad')

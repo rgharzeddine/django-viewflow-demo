@@ -12,8 +12,7 @@ from django.contrib.auth.models import User
 #     LoginRequiredMixin,
 # )
 
-from django.views.generic import ListView, UpdateView
-from django.views.generic.base import View
+from django.views.generic import ListView, UpdateView, TemplateView
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
 
@@ -79,7 +78,7 @@ class StartDailyTimesheetProcessView(CreateProcessView):
         approval.sheet = sheet
         approval.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(StartDailyTimesheetProcessView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -104,7 +103,7 @@ class FillDailyTimesheetView(UpdateProcessView):
         approval.sheet = sheet
         approval.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(FillDailyTimesheetView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -125,7 +124,7 @@ class ApproveDailyTimesheetView(UpdateProcessView):
         sheet.approved_at = datetime.now()
         sheet.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(ApproveDailyTimesheetView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -175,7 +174,7 @@ class StartVacationProcessView(CreateProcessView):
         approval.vacation = vacation
         approval.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(StartVacationProcessView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -200,7 +199,7 @@ class FillVacationView(UpdateProcessView):
         approval.vacation = vacation
         approval.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(FillVacationView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -221,7 +220,7 @@ class ApproveVacationView(UpdateProcessView):
         vacation.approved_at = datetime.now()
         vacation.save()
 
-        if '_continue' in form.data.keys():
+        if '_continue' in form.data:
             return super(ApproveVacationView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
@@ -243,12 +242,19 @@ class TaskListView(ListView):
         else:
             exclude = False
 
+        if filter_by == 'new':
+            queryset = Task.objects.filter(owner=user)
+        else:
+            # TODO: filter tasks by permissions
+            # return tasks that can be assigned to logged in user
+            queryset = Task.objects.all()
+
         if filter_by:
             if exclude:
-                return Task.objects.filter(owner=user).exclude(
+                return queryset.exclude(
                     status=filter_by)
-            return Task.objects.filter(owner=user, status=filter_by)
-        return Task.objects.filter(owner=user)
+            return queryset.filter(status=filter_by)
+        return queryset
 
 
 class ProcessListView(ListView):
@@ -273,8 +279,18 @@ class ProcessListView(ListView):
         return Process.objects.all()
 
 
-class ProcessClassesListView(View):
+class ProcessClassesListView(TemplateView):
     template_name = 'example/process_class_list.html'
 
-    def get(self, request):
-        return render(request, self.template_name, context={})
+
+class AssignTaskView(UpdateProcessView):
+    model = Task
+
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.owner = self.request.user
+        task.save()
+
+        if '_continue' in form.data:
+            return super(AssignTaskView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)

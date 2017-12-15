@@ -2,7 +2,7 @@ from viewflow import flow, lock
 from viewflow.base import this, Flow
 # from viewflow.flow.views import UpdateProcessView, CreateProcessView
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 # from viewflow.decorators import flow_start_func
 
 # from .models import DailyTimesheet
@@ -25,9 +25,9 @@ from .views import (
 #     return activation
 
 
-def approve_assign(activation):
-    # return user by permissions
-    return User.objects.get(username='omar')
+# def approve_assign(activation):
+#     # return user by permissions
+#     return User.objects.get(username='omar')
 
 
 def assign_daily_timesheet_fill(activation):
@@ -81,7 +81,7 @@ class DailyTimesheetApprovalFlow(Flow):
             task_title='daily timesheet approval',
         )
         .Permission('auth.can_approve')
-        .Assign(approve_assign)
+        # .Assign(approve_assign)
         .Next(this.check_approval)
     )
 
@@ -126,7 +126,7 @@ class VacationApprovalFlow(Flow):
             task_title='vacation approval',
         )
         .Permission('auth.can_approve')
-        .Assign(approve_assign)
+        # .Assign(approve_assign)
         .Next(this.check_approval)
     )
 
