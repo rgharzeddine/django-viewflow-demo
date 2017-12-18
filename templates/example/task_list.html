@@ -17,9 +17,8 @@ My Tasks
         <table class="table table-bordered ">
             <thead>
                 <tr>
-                    <th>Reference</th>
-                    <th>Created At</th>
                     <th>Details </th>
+                    <th>Created At</th>
                     <th>Status </th>
                     <th>Comments</th>
                 </tr>
@@ -30,13 +29,14 @@ My Tasks
                 <tr>
                     <td>
                         {% if task_url %}
-                        <a href="{{ task_url }}">{{ task.process.pk }}/{{ task.pk }}</a>
+                        <a href="{{ task_url }}">
+                            {{ task.flow_process }}
+                        </a>
                         {% else %}
-                        {{ task.process.pk }}/{{ task.pk }}
+                            {{ task.flow_process }}
                         {% endif %}
                     </td>
                     <td>{{ task.created }}</td>
-                    <td>{{ task.flow_process }}</td>
                     <td>{{ task.status }}</td>
                     <td>{{ task.comments }}</td>
                 </tr>

@@ -63,7 +63,7 @@ class StartDailyTimesheetProcessView(CreateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -88,7 +88,7 @@ class FillDailyTimesheetView(UpdateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -113,7 +113,7 @@ class ApproveDailyTimesheetView(UpdateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self):
         return self.activation.process.sheet
@@ -159,7 +159,7 @@ class StartVacationProcessView(CreateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -184,7 +184,7 @@ class FillVacationView(UpdateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -209,7 +209,7 @@ class ApproveVacationView(UpdateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:index')
+        return reverse_lazy('example:tasks') + '?filter=-done'
 
     def get_object(self):
         return self.activation.process.vacation
@@ -242,7 +242,7 @@ class TaskListView(ListView):
         else:
             exclude = False
 
-        if filter_by == 'new':
+        if filter_by != 'NEW':
             queryset = Task.objects.filter(owner=user)
         else:
             # TODO: filter tasks by permissions
@@ -294,3 +294,16 @@ class AssignTaskView(UpdateProcessView):
         if '_continue' in form.data:
             return super(AssignTaskView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
+
+
+# class UnassignTaskView(UpdateProcessView):
+#     model = Task
+
+#     def form_valid(self, form):
+#         task = form.save(commit=False)
+#         task.owner = None
+#         task.save()
+
+#         if '_continue' in form.data:
+#             return super(UnassignTaskView, self).form_valid(form)
+#         return super(UpdateView, self).form_valid(form)

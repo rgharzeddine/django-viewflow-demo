@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load viewflow %}
 
 {% block title %}
-Approve Timesheet
+Timesheet Approval
 {% endblock %}
 
 {% block main_content %}
@@ -15,6 +16,18 @@ Approve Timesheet
                 <h3 class="box-title">Approve a timesheet</h3>
             </div>
             <div class="box-body">
+                <dl class="dl-horizontal">
+                    <dt>User</dt>
+                    <dd>{{ activation.process.sheet.for_user }}</dd>
+                    <dt>Date</dt>
+                    <dd>{{ activation.process.sheet.date }}</dd>
+                    <dt>Code</dt>
+                    <dd>{{ activation.process.sheet.code }}</dd>
+                    <dt>Status</dt>
+                    <dd>{{ activation.process.sheet.approval_status }}</dd>
+                </dl>
+            </div>
+            <div class="box-body">
                 <form method="post" class="form form-inline">
                     {% csrf_token %}
                     {{ form }}
@@ -22,7 +35,7 @@ Approve Timesheet
                 </div>
                 <div class="box-footer">
                     <button type="submit" name="_start" class="btn btn-primary">Save</button>
-                    <button type="submit" name="_continue" class="btn btn-primary">Approve</button>
+                    <button type="submit" name="_continue" class="btn btn-primary">Submit</button>
 
                     <a href="{% url 'example:tasks' %}?filter=-done" class="btn btn-default">
                         <span class="glyphicon glyphicon-tasks"></span> Tasks
@@ -30,6 +43,10 @@ Approve Timesheet
                     <a href="{% url 'example:index' %}" class="btn btn-default">
                         <span class="glyphicon glyphicon-home"></span> Home
                     </a>
+                    {% flowurl activation.task 'unassign' user=request.user as unassign_url %}
+                    {% if unassign_url %}
+                    <a href="{{ unassign_url }}?{{ task }}" class="btn btn-primary">Unassign</a>
+                    {% endif %}
                 </div>
             </div>
         </form>

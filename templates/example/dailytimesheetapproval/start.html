@@ -17,11 +17,11 @@ Enter a daily timesheet
                 </h3>
             </div>
             <form action="." method="post" class="form form-inline">
-                <div class="box-body actions">
+                <!-- <div class="box-body actions"> -->
                     {% csrf_token %}
                     {{ form }}
                     {{ activation.management_form }}
-                </div>
+                <!-- </div> -->
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Create</button>
                     <a href="{% url 'example:timesheets' %}" class="btn btn-default">

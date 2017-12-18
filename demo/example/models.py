@@ -6,6 +6,7 @@ from django.db.models import (
     CASCADE,
     CharField,
     DateField,
+    BooleanField,
     OneToOneField,
     DateTimeField,
     ForeignKey,
@@ -61,17 +62,19 @@ class DailyTimesheet(Model):
 
 class DailyTimesheetApproval(Process):
 
-    sheet = OneToOneField(
+    sheet = ForeignKey(
         DailyTimesheet,
         on_delete=CASCADE,
         null=True,
         related_name='approval')
 
     def __str__(self):
-        return 'Daily timesheet approval for {} on date {}'.format(
-            self.sheet.for_user.username,
-            self.sheet.date,
-        )
+        if self.sheet:
+            return 'Daily timesheet approval for {} on date {}'.format(
+                self.sheet.for_user.username,
+                self.sheet.date,
+            )
+        return 'New Daily timesheet'
 
 
 class Vacation(Model):
@@ -101,6 +104,7 @@ class Vacation(Model):
         null=True,
         on_delete=CASCADE,
         related_name='vacation_approvals')
+    final = BooleanField(default=False)
 
     def is_approved(self):
         return self.approval_status == 'approved'
@@ -120,3 +124,9 @@ class VacationApproval(Process):
             self.vacation.start_date,
             self.vacation.end_date,
         )
+
+# from django.contrib import admin
+# admin.site.register(DailyTimesheet)
+# admin.site.register(DailyTimesheetApproval)
+# admin.site.register(Vacation)
+# admin.site.register(VacationApproval)

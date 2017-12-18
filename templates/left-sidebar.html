@@ -16,6 +16,7 @@
     <ul class="sidebar-menu">
         <li class="header">Personal</li>
         <li><a href="{% url 'example:index' %}"><i class="fa fa-home"></i> <span>Home</span></a></li>
+
         {% if user.is_authenticated %}
         <li class="treeview">
             <a href="#">
@@ -25,7 +26,7 @@
                 </span>
             </a>
             <ul class="treeview-menu">
-                <li><a href="{% url 'example:process_classes' %}"><i class="fa fa-dot-circle-o"></i>Classes</a></li>
+                <li><a href="{% url 'example:process_classes' %}"><i class="fa fa-dot-circle-o"></i>Available</a></li>
                 <li><a href="{% url 'example:processes' %}?filter=-done"><i class="fa fa-circle"></i>In progress</a></li>
                 <li><a href="{% url 'example:processes' %}?filter=done"><i class="fa fa-check-circle"></i>Completed</a></li>
             </ul>
@@ -63,7 +64,11 @@
             </ul>
         </li>
         {% endif %}
-
+        {% if user.is_authenticated %}
+        <li class="header">Browse</li>
+        <li><a href="{% url 'example:timesheets' %}"><i class="glyphicon glyphicon-time"></i> <span>Timesheets</span></a></li>
+        <li><a href="{% url 'example:vacations' %}"><i class="glyphicon glyphicon-plane"></i> <span>Vacations</span></a></li>
+        {% endif %}
         <li class="header">Other</li>
         <li><a href="#"><i class="fa fa-question-circle"></i> <span>Help</span></a></li>
     </ul>

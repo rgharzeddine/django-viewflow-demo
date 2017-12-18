@@ -26,10 +26,6 @@ Process Classes
                         <a href="{% url 'example:daily:start' %}" class="btn btn-sm btn-primary">
                             <span class="fa fa-play-circle"> </span> Start
                         </a>
-                        {% else %}
-                        <a href="#" disabled class="btn btn-sm btn-primary">
-                            <span class="fa fa-play-circle"> </span> Start
-                        </a>
                         {% endif %}
                     </td>
                 </tr>
@@ -38,10 +34,6 @@ Process Classes
                     <td>
                         {% if perms.auth.no_permission %}
                         <a href="{% url 'example:vacation:start' %}" class="btn btn-sm btn-primary">
-                            <span class="fa fa-play-circle"> </span> Start
-                        </a>
-                        {% else %}
-                        <a href="#" disabled class="btn btn-sm btn-primary">
                             <span class="fa fa-play-circle"> </span> Start
                         </a>
                         {% endif %}

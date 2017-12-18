@@ -1,6 +1,6 @@
 from viewflow import flow, lock
 from viewflow.base import this, Flow
-# from viewflow.flow.views import UpdateProcessView, CreateProcessView
+from viewflow.flow.views import CreateProcessView
 
 # from django.contrib.auth.models import User
 # from viewflow.decorators import flow_start_func
@@ -8,7 +8,7 @@ from viewflow.base import this, Flow
 # from .models import DailyTimesheet
 from .models import DailyTimesheetApproval, VacationApproval
 from .views import (
-    StartDailyTimesheetProcessView,
+    # StartDailyTimesheetProcessView,
     FillDailyTimesheetView,
     ApproveDailyTimesheetView,
 
@@ -30,14 +30,9 @@ from .views import (
 #     return User.objects.get(username='omar')
 
 
-def assign_daily_timesheet_fill(activation):
+def assign_user(activation):
     # assign same user
-    return activation.process.sheet.for_user
-
-
-def assign_vacation_fill(activation):
-    # assign same user
-    return activation.process.vacation.for_user
+    return activation.process.created_by
 
 
 def check_daily_timesheet_approved(this_flow):
@@ -58,20 +53,26 @@ class DailyTimesheetApprovalFlow(Flow):
     flow_label = 'daily'
 
     start = (
-        flow.Start(
-            StartDailyTimesheetProcessView,
-            task_title="Timesheet submittal")
+        flow.Start(CreateProcessView)
         .Permission('auth.no_permission')
-        .Next(this.approve)
+        .Next(this.fill)
     )
-    start.comments = 'start a daily timesheet fill process'
+
+    # start = (
+    #     flow.Start(
+    #         StartDailyTimesheetProcessView,
+    #         task_title="Timesheet submittal")
+    #     .Permission('auth.no_permission')
+    #     .Next(this.approve)
+    # )
+    # start.comments = 'start a daily timesheet fill process'
 
     fill = (
         flow.View(
             FillDailyTimesheetView,
             task_title='Update Timesheet')
         .Permission('auth.no_permission')
-        .Assign(assign_daily_timesheet_fill)
+        .Assign(assign_user)
         .Next(this.approve)
     )
 
@@ -116,7 +117,7 @@ class VacationApprovalFlow(Flow):
             FillVacationView,
             task_title='Update Vacation Details')
         .Permission('auth.no_permission')
-        .Assign(assign_vacation_fill)
+        .Assign(assign_user)
         .Next(this.approve)
     )
 
