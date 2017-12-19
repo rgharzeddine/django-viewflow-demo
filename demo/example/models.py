@@ -9,12 +9,18 @@ from django.db.models import (
     CharField,
     DateField,
     BooleanField,
-    # OneToOneField,
     DateTimeField,
     ForeignKey,
     Model,
 )
 from viewflow.models import Process
+
+APPROVAL_STATUS = [
+    ('pending', 'Pending'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+]
+
 
 
 class DailyTimesheet(Model):
@@ -30,27 +36,20 @@ class DailyTimesheet(Model):
         ('business_trip', 'Business Trip'),
     ]
 
+
     for_user = ForeignKey(User, on_delete=CASCADE, related_name='sheets')
     date = DateField()
-    code = CharField(
-        max_length=20,
-        choices=CODE,
-        default='present',
-    )
+    code = CharField( max_length=20, choices=CODE, default='present')
     created_at = DateTimeField(auto_now=True)
-
-    APPROVAL_STATUS = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
 
     approval_status = CharField(
         max_length=20,
         choices=APPROVAL_STATUS,
         default='pending',
     )
+
     approved_at = DateTimeField(blank=True, null=True)
+
     approved_by = ForeignKey(
         User,
         blank=True,
@@ -76,7 +75,7 @@ class DailyTimesheetApproval(Process):
                 self.sheet.for_user.username,
                 self.sheet.date,
             )
-        return 'New Daily timesheet'
+        return 'New timesheet approval'
 
 
 class Vacation(Model):
@@ -87,12 +86,6 @@ class Vacation(Model):
     passport_expiry_date = DateField(null=True, blank=True)
     requested_on = DateField(auto_now=True)
     details = CharField(max_length=300, default='vacation')
-
-    APPROVAL_STATUS = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
 
     approval_status = CharField(
         max_length=20,
@@ -110,11 +103,10 @@ class Vacation(Model):
     request_details = BooleanField(default=False)
 
     def is_approved(self):
-        if self.approval_status == 'approved':
-            return True
-        if not self.request_details:
-            return True
-        return False
+        return any([
+            self.approval_status == 'approved',
+            not self.request_details,
+        ])
 
     def renew_passport(self):
         self.passport_expiry_date = (
@@ -123,10 +115,10 @@ class Vacation(Model):
     def requires_renewal(self):
         if not self.passport_expiry_date:
             return True
-
-        if self.passport_expiry_date < self.end_date:
+        elif self.passport_expiry_date < self.end_date:
             return True
-        return False
+        else:
+            return False
 
 
 class VacationApproval(Process):
@@ -144,4 +136,4 @@ class VacationApproval(Process):
                 self.vacation.start_date,
                 self.vacation.end_date,
             )
-        return 'New vacation'
+        return 'New vacation approval request'

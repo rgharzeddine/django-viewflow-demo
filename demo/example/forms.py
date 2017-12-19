@@ -49,7 +49,7 @@ class FillVacationForm(forms.ModelForm):
 
     class Meta:
         model = Vacation
-        fields = ['start_date', 'end_date', 'details', 'passport_expiry_date']
+        fields = ['start_date', 'end_date', 'passport_expiry_date', 'details']
 
 
 class UpdateVacationForm(FillVacationForm):

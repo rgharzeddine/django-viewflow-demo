@@ -4,26 +4,25 @@
 
 
 {% block title %}
-Request a vacation
+{{ activation.task.flow_task.task_title }}
 {% endblock %}
 
 {% block main_content %}
 <div class="row">
     <div class="col-md-10">
         <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">
-                    Create a vacation request
-                </h3>
-            </div>
             <form action="." method="post" class="form">
-                <div class="box-body actions">
                     {% csrf_token %}
                     {{ form }}
                     {{ activation.management_form }}
-                </div>
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Create</button>
+                    <a href="{% url 'example:vacations' %}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-time"></span> View Vacations
+                    </a>
+                    <a href="{% url 'example:index' %}" class="btn btn-default">
+                        <span class="glyphicon glyphicon-home"></span> Home
+                    </a>
                 </div>
             </form>
         </div>

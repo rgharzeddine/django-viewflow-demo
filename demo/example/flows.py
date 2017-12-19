@@ -5,6 +5,7 @@ from viewflow.flow.views import CreateProcessView
 from django.contrib.auth.models import User
 
 from .models import DailyTimesheetApproval, VacationApproval
+
 from .views import (
     FillDailyTimesheetView,
     ApproveDailyTimesheetView,
@@ -12,31 +13,19 @@ from .views import (
     FillVacationView,
     UpdateVacationView,
     ApproveVacationView,
-
 )
-
-def assign_operator(activation):
-    # assign same user
-    return User.objects.get(username='operator')
 
 
 def assign_user(activation):
-    # assign same user
     return activation.process.created_by
-
-
-def check_daily_timesheet_approved(this_flow):
-    return this_flow.task.process.sheet.is_approved()
 
 
 def check_vacation_approved(this_flow):
     return this_flow.task.process.vacation.is_approved()
 
 
-# daily timesheet approval flow
 class DailyTimesheetApprovalFlow(Flow):
     process_class = DailyTimesheetApproval
-    # lock_impl = lock.select_for_update_lock
     lock_impl = lock.no_lock
 
     label = 'daily'
@@ -45,15 +34,15 @@ class DailyTimesheetApprovalFlow(Flow):
     start = (
         flow.Start(
             CreateProcessView,
-            task_title='Fill a timesheet')
+            task_title='Create a new daily timesheet')
         .Permission('auth.no_permission')
-
         .Next(this.fill)
     )
+
     fill = (
         flow.View(
             FillDailyTimesheetView,
-            task_title='Update your timesheet')
+            task_title='Fill your daily timesheet')
         .Permission('auth.no_permission')
         .Assign(assign_user)
         .Next(this.approve)
@@ -65,23 +54,24 @@ class DailyTimesheetApprovalFlow(Flow):
             task_title='Approve this timesheet',
         )
         .Permission('auth.can_approve')
-        # .Assign(approve_assign)
         .Next(this.check_approval)
     )
 
     check_approval = (
-        flow.If(check_daily_timesheet_approved)
+    
+        flow.If(lambda a: a.task.process.sheet.is_approved())
         .Then(this.end)
         .Else(this.fill)
     )
     end = flow.End()
 
 
-# vacation approval flow
 class VacationApprovalFlow(Flow):
     process_class = VacationApproval
     # lock_impl = lock.select_for_update_lock
     lock_impl = lock.no_lock
+
+    process_description = 'Vacation Approval Request'
 
     label = 'vacation'
     flow_label = 'vacation'
@@ -100,10 +90,10 @@ class VacationApprovalFlow(Flow):
             task_title='Fill your vacation details')
         .Permission('auth.no_permission')
         .Assign(assign_user)
-        .Next(this.split_on_renew)
+        .Next(this.split)
     )
 
-    split_on_renew = (
+    split = (
         flow.Split()
         .Next(
             this.renew,
@@ -117,8 +107,8 @@ class VacationApprovalFlow(Flow):
             task_title='Renew this passport expiry date',
         )
         .Permission('auth.can_renew_passport')
-        .Assign(assign_operator)
-        .Next(this.join_on_check_approval)
+        .Assign(lambda a: User.objects.get(username='operator'))
+        .Next(this.join_)
     )
 
     update = (
@@ -136,16 +126,15 @@ class VacationApprovalFlow(Flow):
             task_title='Approve this vacation request',
         )
         .Permission('auth.can_approve')
-        # .Assign(approve_assign)
         .Next(this.check_approval)
     )
     check_approval = (
         flow.If(check_vacation_approved)
-        .Then(this.join_on_check_approval)
+        .Then(this.join_)
         .Else(this.update)
     )
 
-    join_on_check_approval = (
+    join_ = (
         flow.Join()
         .Next(this.end)
     )

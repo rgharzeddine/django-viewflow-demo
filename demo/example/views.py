@@ -270,7 +270,7 @@ class CompletedTaskListView(BaseTaskListView):
 
 
 class InProgressTaskListView(BaseTaskListView):
-    header = 'Tasks In Progress'
+    header = 'In Progress Tasks'
 
     def get_queryset(self):
         user = self.request.user

@@ -31,7 +31,7 @@ Vacation Approval
             <div class="box-body">
                 <form method="post" class="form form-inline">
                     {% csrf_token %}
-                    {{ form }}
+                    {{ form.as_p }}
                     {{ activation.management_form }}
                 </div>
                 <div class="box-footer">

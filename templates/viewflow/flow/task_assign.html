@@ -4,7 +4,7 @@
 {% load tags %}
 
 {% block title %}
-Assign task
+Claim task
 {% endblock %}
 
 {% block main_content %}
@@ -15,7 +15,7 @@ Assign task
             {% csrf_token %}
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Task</h3>
+                    <h3 class="box-title">{{ activation.task.flow_task.task_title }}</h3>
                 </div>
                 <div class="box-body">
                     {{ form }}
@@ -23,15 +23,12 @@ Assign task
                     {{ activation.management_form }}
                     {% endif %}
 
-                    {{ activation.task.flow_process }}
+                    <h3>{{ activation.process }}</h3>
                 </div>
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Assign Myself</button>
                     <a href="{% url 'example:tasks_unassigned' %}" class="btn btn-default">
-                        <span class="glyphicon glyphicon-tasks"></span> Unassigned Tasks
-                    </a>
-                    <a href="{% url 'example:index' %}" class="btn btn-default">
-                        <span class="glyphicon glyphicon-home"></span> Home
+                        <span class="glyphicon glyphicon-tasks"></span> View unassigned tasks
                     </a>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Fill Vacation
+Task - {{ activation.task.flow_task.task_title }}
 {% endblock %}
 
 {% block main_content %}
@@ -12,21 +12,17 @@ Fill Vacation
     <div class="col-md-10">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Update my Vacation</h3>
+                <h3 class="box-title">Vacation Details</h3>
             </div>
             <div class="box-body">
                 <form action="." method="post" class="form">
                     {% csrf_token %}
-                    {{ form }}
+                    {{ form.as_p }}
                     {{ activation.management_form }}
                 </div>
                 <div class="box-footer">
                     <button type="submit" name="_start" class="btn btn-primary">Save</button>
-                    <button type="submit" name="_continue" class="btn btn-primary">Update</button>
-
-                    <a href="{% url 'example:index' %}" class="btn btn-default">
-                        <span class="glyphicon glyphicon-home"></span> Home
-                    </a>
+                    <button type="submit" name="_continue" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
