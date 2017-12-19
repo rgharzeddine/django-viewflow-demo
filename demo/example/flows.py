@@ -2,32 +2,22 @@ from viewflow import flow, lock
 from viewflow.base import this, Flow
 from viewflow.flow.views import CreateProcessView
 
-# from django.contrib.auth.models import User
-# from viewflow.decorators import flow_start_func
+from django.contrib.auth.models import User
 
-# from .models import DailyTimesheet
 from .models import DailyTimesheetApproval, VacationApproval
 from .views import (
-    # StartDailyTimesheetProcessView,
     FillDailyTimesheetView,
     ApproveDailyTimesheetView,
-
-    StartVacationProcessView,
+    RenewPassportView,
     FillVacationView,
+    UpdateVacationView,
     ApproveVacationView,
 
 )
 
-# @flow_start_func
-# def create_flow(activation, **kwargs):
-#     activation.prepare()
-#     activation.done()
-#     return activation
-
-
-# def approve_assign(activation):
-#     # return user by permissions
-#     return User.objects.get(username='omar')
+def assign_operator(activation):
+    # assign same user
+    return User.objects.get(username='operator')
 
 
 def assign_user(activation):
@@ -53,24 +43,17 @@ class DailyTimesheetApprovalFlow(Flow):
     flow_label = 'daily'
 
     start = (
-        flow.Start(CreateProcessView)
+        flow.Start(
+            CreateProcessView,
+            task_title='Fill a timesheet')
         .Permission('auth.no_permission')
+
         .Next(this.fill)
     )
-
-    # start = (
-    #     flow.Start(
-    #         StartDailyTimesheetProcessView,
-    #         task_title="Timesheet submittal")
-    #     .Permission('auth.no_permission')
-    #     .Next(this.approve)
-    # )
-    # start.comments = 'start a daily timesheet fill process'
-
     fill = (
         flow.View(
             FillDailyTimesheetView,
-            task_title='Update Timesheet')
+            task_title='Update your timesheet')
         .Permission('auth.no_permission')
         .Assign(assign_user)
         .Next(this.approve)
@@ -79,7 +62,7 @@ class DailyTimesheetApprovalFlow(Flow):
     approve = (
         flow.View(
             ApproveDailyTimesheetView,
-            task_title='daily timesheet approval',
+            task_title='Approve this timesheet',
         )
         .Permission('auth.can_approve')
         # .Assign(approve_assign)
@@ -105,17 +88,43 @@ class VacationApprovalFlow(Flow):
 
     start = (
         flow.Start(
-            StartVacationProcessView,
-            task_title="Request for vacation")
+            CreateProcessView,
+            task_title='Request a vacation')
         .Permission('auth.no_permission')
-        .Next(this.approve)
+        .Next(this.fill)
     )
-    start.comments = 'start vacation request process'
 
     fill = (
         flow.View(
             FillVacationView,
-            task_title='Update Vacation Details')
+            task_title='Fill your vacation details')
+        .Permission('auth.no_permission')
+        .Assign(assign_user)
+        .Next(this.split_on_renew)
+    )
+
+    split_on_renew = (
+        flow.Split()
+        .Next(
+            this.renew,
+            cond=lambda act: act.process.vacation.requires_renewal())
+        .Always(this.approve)
+    )
+
+    renew = (
+        flow.View(
+            RenewPassportView,
+            task_title='Renew this passport expiry date',
+        )
+        .Permission('auth.can_renew_passport')
+        .Assign(assign_operator)
+        .Next(this.join_on_check_approval)
+    )
+
+    update = (
+        flow.View(
+            UpdateVacationView,
+            task_title='Update your vacation details')
         .Permission('auth.no_permission')
         .Assign(assign_user)
         .Next(this.approve)
@@ -124,16 +133,20 @@ class VacationApprovalFlow(Flow):
     approve = (
         flow.View(
             ApproveVacationView,
-            task_title='vacation approval',
+            task_title='Approve this vacation request',
         )
         .Permission('auth.can_approve')
         # .Assign(approve_assign)
         .Next(this.check_approval)
     )
-
     check_approval = (
         flow.If(check_vacation_approved)
-        .Then(this.end)
-        .Else(this.fill)
+        .Then(this.join_on_check_approval)
+        .Else(this.update)
+    )
+
+    join_on_check_approval = (
+        flow.Join()
+        .Next(this.end)
     )
     end = flow.End()

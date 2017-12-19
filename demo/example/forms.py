@@ -38,9 +38,22 @@ class FillVacationForm(forms.ModelForm):
         widget=forms.DateInput(
             attrs={'class': 'datepicker week-start-date form-control'}))
 
+    passport_expiry_date = forms.DateField(
+        input_formats=settings.DATE_INPUT_FORMAT,
+        widget=forms.DateInput(
+            attrs={'class': 'datepicker week-start-date form-control'}))
+
     details = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'form-control'})
     )
+
+    class Meta:
+        model = Vacation
+        fields = ['start_date', 'end_date', 'details', 'passport_expiry_date']
+
+
+class UpdateVacationForm(FillVacationForm):
+    passport_expiry_date = None
 
     class Meta:
         model = Vacation
@@ -51,4 +64,11 @@ class ApproveVacationForm(forms.ModelForm):
 
     class Meta:
         model = Vacation
-        fields = ['approval_status']
+        fields = ['approval_status', 'request_details']
+
+
+class RenewPassportForm(forms.ModelForm):
+
+    class Meta:
+        model = Vacation
+        fields = []

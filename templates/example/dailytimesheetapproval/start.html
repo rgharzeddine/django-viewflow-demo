@@ -17,11 +17,9 @@ Enter a daily timesheet
                 </h3>
             </div>
             <form action="." method="post" class="form form-inline">
-                <!-- <div class="box-body actions"> -->
                     {% csrf_token %}
                     {{ form }}
                     {{ activation.management_form }}
-                <!-- </div> -->
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Create</button>
                     <a href="{% url 'example:timesheets' %}" class="btn btn-default">
@@ -30,7 +28,6 @@ Enter a daily timesheet
                     <a href="{% url 'example:index' %}" class="btn btn-default">
                         <span class="glyphicon glyphicon-home"></span> Home
                     </a>
-                    <!-- <button type="submit" name="_start" class="btn btn-default">Start</button> -->
                 </div>
             </form>
         </div>

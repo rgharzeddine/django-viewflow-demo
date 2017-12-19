@@ -1,9 +1,6 @@
 from viewflow.flow.viewset import FlowViewSet
 
 from django.conf.urls import url, include
-# from django.contrib.auth import views as auth_views
-# from django.contrib.auth.decorators import login_required
-# from django.views.generic import TemplateView
 
 from . import views
 from .flows import DailyTimesheetApprovalFlow, VacationApprovalFlow

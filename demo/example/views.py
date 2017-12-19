@@ -6,12 +6,6 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-
-# from django.contrib.auth.mixins import (
-#     # PermissionRequiredMixin,
-#     LoginRequiredMixin,
-# )
-
 from django.views.generic import ListView, UpdateView, TemplateView
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
@@ -191,6 +185,7 @@ class FillVacationView(UpdateProcessView):
     def form_valid(self, form):
         vacation = form.save(commit=False)
         vacation.for_user = self.request.user
+        vacation.request_details = False
         vacation.save()
 
         approval = self.activation.process
@@ -200,6 +195,10 @@ class FillVacationView(UpdateProcessView):
         if '_continue' in form.data:
             return super(FillVacationView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
+
+
+class UpdateVacationView(FillVacationView):
+    form_class = forms.UpdateVacationForm
 
 
 class ApproveVacationView(UpdateProcessView):
@@ -220,6 +219,26 @@ class ApproveVacationView(UpdateProcessView):
 
         if '_continue' in form.data:
             return super(ApproveVacationView, self).form_valid(form)
+        return super(UpdateView, self).form_valid(form)
+
+
+class RenewPassportView(UpdateProcessView):
+    form_class = forms.RenewPassportForm
+    model = Vacation
+
+    def get_success_url(self):
+        return reverse_lazy('example:tasks_in_progress')
+
+    def get_object(self):
+        return self.activation.process.vacation
+
+    def form_valid(self, form):
+        vacation = form.save(commit=False)
+        vacation.renew_passport()
+        vacation.save()
+
+        if '_continue' in form.data:
+            return super(RenewPassportView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
 
@@ -282,29 +301,3 @@ class ProcessListView(ListView):
 
 class ProcessClassesListView(TemplateView):
     template_name = 'example/process_class_list.html'
-
-
-class AssignTaskView(UpdateProcessView):
-    model = Task
-
-    def form_valid(self, form):
-        task = form.save(commit=False)
-        task.owner = self.request.user
-        task.save()
-
-        if '_continue' in form.data:
-            return super(AssignTaskView, self).form_valid(form)
-        return super(UpdateView, self).form_valid(form)
-
-
-# class UnassignTaskView(UpdateProcessView):
-#     model = Task
-
-#     def form_valid(self, form):
-#         task = form.save(commit=False)
-#         task.owner = None
-#         task.save()
-
-#         if '_continue' in form.data:
-#             return super(UnassignTaskView, self).form_valid(form)
-#         return super(UpdateView, self).form_valid(form)

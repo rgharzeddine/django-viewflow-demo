@@ -1,4 +1,6 @@
 """main models"""
+from datetime import datetime
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 
@@ -7,7 +9,7 @@ from django.db.models import (
     CharField,
     DateField,
     BooleanField,
-    OneToOneField,
+    # OneToOneField,
     DateTimeField,
     ForeignKey,
     Model,
@@ -82,6 +84,7 @@ class Vacation(Model):
     for_user = ForeignKey(User, on_delete=CASCADE, related_name='vacations')
     start_date = DateField()
     end_date = DateField()
+    passport_expiry_date = DateField(null=True, blank=True)
     requested_on = DateField(auto_now=True)
     details = CharField(max_length=300, default='vacation')
 
@@ -104,29 +107,41 @@ class Vacation(Model):
         null=True,
         on_delete=CASCADE,
         related_name='vacation_approvals')
-    final = BooleanField(default=False)
+    request_details = BooleanField(default=False)
 
     def is_approved(self):
-        return self.approval_status == 'approved'
+        if self.approval_status == 'approved':
+            return True
+        if not self.request_details:
+            return True
+        return False
+
+    def renew_passport(self):
+        self.passport_expiry_date = (
+            datetime.now() + timedelta(days=365)).date()
+
+    def requires_renewal(self):
+        if not self.passport_expiry_date:
+            return True
+
+        if self.passport_expiry_date < self.end_date:
+            return True
+        return False
 
 
 class VacationApproval(Process):
 
-    vacation = OneToOneField(
+    vacation = ForeignKey(
         Vacation,
         on_delete=CASCADE,
         null=True,
         related_name='approval')
 
     def __str__(self):
-        return 'Vacation approval for {} starting {} and ending {}'.format(
-            self.vacation.for_user.username,
-            self.vacation.start_date,
-            self.vacation.end_date,
-        )
-
-# from django.contrib import admin
-# admin.site.register(DailyTimesheet)
-# admin.site.register(DailyTimesheetApproval)
-# admin.site.register(Vacation)
-# admin.site.register(VacationApproval)
+        if self.vacation:
+            return 'Vacation approval for {} starting {} and ending {}'.format(
+                self.vacation.for_user.username,
+                self.vacation.start_date,
+                self.vacation.end_date,
+            )
+        return 'New vacation'

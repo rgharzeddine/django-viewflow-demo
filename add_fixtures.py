@@ -63,6 +63,7 @@ def add_group_permissions_for_models(group_name, model_names):
 if __name__ == '__main__':
 
     # create a managers group has approval permissions
+    add_group('operators', ['can_renew_passport'])
     add_group('managers', ['can_approve'])
     add_group('users', ['no_permission'])
 
@@ -96,5 +97,8 @@ if __name__ == '__main__':
     add_user_to_group('lara', 'users')
     add_user('dinesh')
     add_user_to_group('dinesh', 'users')
+
+    add_user('operator')
+    add_user_to_group('operator', 'operators')
 
     print('fixtures added')
