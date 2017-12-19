@@ -15,12 +15,10 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, UpdateView, TemplateView
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
+from viewflow.models import Process, Task
 
 from .models import DailyTimesheet, Vacation
-
 from . import forms
-
-from viewflow.models import Process, Task
 
 
 def fast_login(request):
@@ -63,7 +61,7 @@ class StartDailyTimesheetProcessView(CreateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -88,7 +86,7 @@ class FillDailyTimesheetView(UpdateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -113,7 +111,7 @@ class ApproveDailyTimesheetView(UpdateProcessView):
     model = DailyTimesheet
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self):
         return self.activation.process.sheet
@@ -159,7 +157,7 @@ class StartVacationProcessView(CreateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -184,7 +182,7 @@ class FillVacationView(UpdateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self, queryset=None):
         """Return the process for the task activation."""
@@ -209,7 +207,7 @@ class ApproveVacationView(UpdateProcessView):
     model = Vacation
 
     def get_success_url(self):
-        return reverse_lazy('example:tasks') + '?filter=-done'
+        return reverse_lazy('example:tasks_in_progress')
 
     def get_object(self):
         return self.activation.process.vacation
@@ -226,35 +224,38 @@ class ApproveVacationView(UpdateProcessView):
 
 
 # Flow tasks and processes
-class TaskListView(ListView):
+class BaseTaskListView(ListView):
     template_name = 'example/task_list.html'
     model = Task
     context_object_name = 'tasks'
 
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['header'] = self.header
+        return context
+
+
+class UnassignedTaskListView(BaseTaskListView):
+    header = 'Unassigned Tasks'
+
     def get_queryset(self):
+        return Task.objects.filter(status='NEW', owner=None)
 
+
+class CompletedTaskListView(BaseTaskListView):
+    header = 'Completed Tasks'
+
+    def get_queryset(self):
         user = self.request.user
-        filter_by = self.request.GET.get('filter', '').upper()
+        return Task.objects.filter(status='DONE', owner=user)
 
-        if filter_by.startswith('-'):
-            exclude = True
-            filter_by = filter_by[1:]
-        else:
-            exclude = False
 
-        if filter_by != 'NEW':
-            queryset = Task.objects.filter(owner=user)
-        else:
-            # TODO: filter tasks by permissions
-            # return tasks that can be assigned to logged in user
-            queryset = Task.objects.all()
+class InProgressTaskListView(BaseTaskListView):
+    header = 'Tasks In Progress'
 
-        if filter_by:
-            if exclude:
-                return queryset.exclude(
-                    status=filter_by)
-            return queryset.filter(status=filter_by)
-        return queryset
+    def get_queryset(self):
+        user = self.request.user
+        return Task.objects.filter(owner=user).exclude(status='DONE')
 
 
 class ProcessListView(ListView):

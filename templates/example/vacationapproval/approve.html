@@ -38,7 +38,7 @@ Vacation Approval
                     <button type="submit" name="_start" class="btn btn-primary">Save</button>
                     <button type="submit" name="_continue" class="btn btn-primary">Submit</button>
 
-                    <a href="{% url 'example:tasks' %}?filter=-done" class="btn btn-default">
+                    <a href="{% url 'example:tasks_in_progress' %}" class="btn btn-default">
                         <span class="glyphicon glyphicon-tasks"></span> Tasks
                     </a>
                     <a href="{% url 'example:index' %}" class="btn btn-default">

@@ -20,8 +20,14 @@ urlpatterns = [
     url(r'^vacation$', views.VacationListView.as_view(),
         name='vacations'),
 
-    url(r'^task$', views.TaskListView.as_view(),
-        name='tasks'),
+    url(r'^task/completed/$', views.CompletedTaskListView.as_view(),
+        name='tasks_completed'),
+
+    url(r'^task/in_progress/$', views.InProgressTaskListView.as_view(),
+        name='tasks_in_progress'),
+
+    url(r'^task/unassigned/$', views.UnassignedTaskListView.as_view(),
+        name='tasks_unassigned'),
 
     url(r'^process$', views.ProcessListView.as_view(),
         name='processes'),

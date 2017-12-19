@@ -27,7 +27,7 @@ Assign task
                 </div>
                 <div class="box-footer">
                     <button type="submit" name="_continue" class="btn btn-primary">Assign Myself</button>
-                    <a href="{% url 'example:tasks' %}?filter=new" class="btn btn-default">
+                    <a href="{% url 'example:tasks_unassigned' %}" class="btn btn-default">
                         <span class="glyphicon glyphicon-tasks"></span> Unassigned Tasks
                     </a>
                     <a href="{% url 'example:index' %}" class="btn btn-default">

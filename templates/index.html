@@ -65,22 +65,22 @@ Welcome
                 <ul>
                     <li>
                         <a href="{% url 'example:daily:tasks' %}">
-                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (daily)
+                            <span class="glyphicon glyphicon-tasks"></span> View daily timesheet related tasks
                         </a>
                     </li>
                     <li>
                         <a href="{% url 'example:vacation:tasks' %}">
-                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (vacation)
+                            <span class="glyphicon glyphicon-tasks"></span> View vacation request related tasks
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'example:tasks' %}?filter=-done">
-                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (not done)
+                        <a href="{% url 'example:tasks_in_progress' %}">
+                            <span class="glyphicon glyphicon-tasks"></span> View in progress tasks
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'example:tasks' %}?filter=done">
-                            <span class="glyphicon glyphicon-tasks"></span> View my tasks (done)
+                        <a href="{% url 'example:tasks_completed' %}">
+                            <span class="glyphicon glyphicon-tasks"></span> View completed tasks
                         </a>
                     </li>
                 </ul>

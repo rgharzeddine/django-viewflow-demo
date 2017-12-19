@@ -3,14 +3,14 @@
 {% load tags %}
 
 {% block title %}
-My Tasks
+{{ header }}
 {% endblock %}
 
 {% block main_content %}
 <div class="box box-primary">
     <div class="box-header with-border">
         <i class="fa fa-black-tie"></i>
-        <h3 class="box-title">User Tasks</h3>
+        <h3 class="box-title">{{ header }}</h3>
     </div>
     <div class="box-body">
         {% if tasks %}
@@ -20,7 +20,6 @@ My Tasks
                     <th>Details </th>
                     <th>Created At</th>
                     <th>Status </th>
-                    <th>Comments</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,15 +29,14 @@ My Tasks
                     <td>
                         {% if task_url %}
                         <a href="{{ task_url }}">
-                            {{ task.flow_process }}
+                            {{ task.flow_task.task_title }}
                         </a>
                         {% else %}
-                            {{ task.flow_process }}
+                            {{ task.flow_task.task_title }}
                         {% endif %}
                     </td>
                     <td>{{ task.created }}</td>
                     <td>{{ task.status }}</td>
-                    <td>{{ task.comments }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

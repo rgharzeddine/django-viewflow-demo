@@ -43,20 +43,20 @@
             <ul class="treeview-menu">
                 {% if perms.auth.can_approve %}
                 <li>
-                    <a href="{% url 'example:tasks' %}?filter=new">
+                    <a href="{% url 'example:tasks_unassigned' %}">
                         <i class="fa fa-circle-o"></i>
                         Unassigned
                     </a>
                 </li>
                 {% endif %}
                 <li>
-                    <a href="{% url 'example:tasks' %}?filter=-done">
+                    <a href="{% url 'example:tasks_in_progress' %}">
                         <i class="fa fa-circle"></i>
                         In progress
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'example:tasks' %}?filter=done">
+                    <a href="{% url 'example:tasks_completed' %}">
                         <i class="fa fa-check-circle"></i>
                         Completed
                     </a>

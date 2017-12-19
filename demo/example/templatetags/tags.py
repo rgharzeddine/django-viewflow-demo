@@ -4,10 +4,12 @@ register = template.Library()
 
 @register.simple_tag
 def get_task_url(task):
+    application = 'example'
     label = task.process.flow_class.flow_label
 
     if task.status.lower() == 'done':
-        return '{}/{}/{}/{}/detail'.format(
+        return '/{}/{}/{}/{}/{}/detail'.format(
+            application,
             label,
             task.process_id,
             str(task.flow_task).lower(),
@@ -15,14 +17,16 @@ def get_task_url(task):
         )
 
     if not task.owner:
-        return '{}/{}/{}/{}/assign'.format(
+        return '/{}/{}/{}/{}/{}/assign'.format(
+            application,
             label,
             task.process_id,
             str(task.flow_task).lower(),
             task.id,
         )
 
-    return '{}/{}/{}/{}'.format(
+    return '/{}/{}/{}/{}/{}'.format(
+        application,
         label,
         task.process_id,
         str(task.flow_task).lower(),
