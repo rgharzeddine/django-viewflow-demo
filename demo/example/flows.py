@@ -29,6 +29,10 @@ class CeleryJobActivation(AbstractJobActivation):
     def run_async(self, *args, **kwargs):
         dummy()
 
+        # IMPORTANT
+        # using id(self) as a fast solution instead of
+        # pickling for serialization
+
         # FAILS TO WORK
         calculate_sheet_payroll.delay(id(self))
 
