@@ -29,8 +29,13 @@ pip install -r requirements.txt
 ## Running Demo
 
 ```bash
-. reset_flows.sh
-./manage.py runserver 0.0.0.0:8000
+$ . reset_flows.sh
+$ ./manage.py runserver 0.0.0.0:8000
+
+```
+
+```bash
+$ celery -A demo worker
 
 ```
 

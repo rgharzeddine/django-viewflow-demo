@@ -1,4 +1,8 @@
 """main models"""
+
+from time import sleep
+from random import uniform as randfloat
+
 from datetime import datetime
 from datetime import timedelta
 
@@ -12,6 +16,7 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     Model,
+    FloatField,
 )
 from viewflow.models import Process
 
@@ -20,7 +25,6 @@ APPROVAL_STATUS = [
     ('approved', 'Approved'),
     ('rejected', 'Rejected'),
 ]
-
 
 
 class DailyTimesheet(Model):
@@ -36,11 +40,11 @@ class DailyTimesheet(Model):
         ('business_trip', 'Business Trip'),
     ]
 
-
     for_user = ForeignKey(User, on_delete=CASCADE, related_name='sheets')
     date = DateField()
-    code = CharField( max_length=20, choices=CODE, default='present')
+    code = CharField(max_length=20, choices=CODE, default='present')
     created_at = DateTimeField(auto_now=True)
+    payroll = FloatField(null=True, blank=True)
 
     approval_status = CharField(
         max_length=20,
@@ -59,6 +63,12 @@ class DailyTimesheet(Model):
 
     def is_approved(self):
         return self.approval_status == 'approved'
+
+    def calculate_payroll(self):
+        print('calculating payroll')
+        sleep(randfloat(1.0, 5.0))
+        self.payroll = randfloat(200.0, 1000.0)
+        self.save()
 
 
 class DailyTimesheetApproval(Process):
