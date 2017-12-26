@@ -1,10 +1,8 @@
 from viewflow import flow, lock
 from viewflow.base import this, Flow
 from viewflow.flow.views import CreateProcessView
-from viewflow.activation import AbstractJobActivation, STATUS
 
 from django.contrib.auth.models import User
-from django.utils.timezone import now
 
 from .models import DailyTimesheetApproval, VacationApproval
 
@@ -18,20 +16,7 @@ from .views import (
 )
 
 from .tasks import calculate_sheet_payroll
-
-
-class CeleryJobActivation(AbstractJobActivation):
-
-    status = AbstractJobActivation.status
-
-    @status.transition(
-        source=[STATUS.STARTED, STATUS.ASSIGNED], target=STATUS.DONE)
-    def done(self):
-        """Cancel existing task."""
-        self.task.finished = now()
-        self.task.status = STATUS.DONE
-        self.task.save()
-        self.activate_next()
+from .celery_viewflow import CeleryJobActivation, CeleryJob
 
 
 class PayrollJobActivation(CeleryJobActivation):
@@ -40,10 +25,6 @@ class PayrollJobActivation(CeleryJobActivation):
         # WORKS
         calculate_sheet_payroll.delay(self.process.sheet.id)
         self.done()
-
-
-class CeleryJob(flow.AbstractJob):
-    pass
 
 
 def assign_user(activation):
@@ -80,8 +61,8 @@ class DailyTimesheetApprovalFlow(Flow):
 
     calculate_payroll = (
         CeleryJob(
-            calculate_sheet_payroll,
-            activation_class=PayrollJobActivation
+            # calculate_sheet_payroll,
+            activation_class=PayrollJobActivation,
         )
         .Next(this.approve)
     )

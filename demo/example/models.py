@@ -65,9 +65,10 @@ class DailyTimesheet(Model):
         return self.approval_status == 'approved'
 
     def calculate_payroll(self):
-        print('calculating payroll')
-        sleep(randfloat(1.0, 5.0))
+        print('started calculating payroll (takes some time...)')
+        sleep(randfloat(10.0, 30.0))
         self.payroll = randfloat(200.0, 1000.0)
+        print('finished calculating payroll')
         self.save()
 
 

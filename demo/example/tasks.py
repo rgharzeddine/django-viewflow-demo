@@ -17,9 +17,9 @@ def calculate_sheet_payroll(sheet_id, *args, **kwargs):
     while not done:
         try:
             sheet = DailyTimesheet.objects.get(id=int(sheet_id))
+            print('tried %s time(s)' % counter)
             sheet.calculate_payroll()
             done = True
-            print('tried %s time(s)' % counter)
         except:
             counter += 1
             pass
