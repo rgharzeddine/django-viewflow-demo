@@ -5,10 +5,10 @@ from viewflow.activation import AbstractJobActivation, STATUS
 
 class CeleryJobActivation(AbstractJobActivation):
 
-    status = AbstractJobActivation.status
+    # status = AbstractJobActivation.status
 
-    @status.transition(
-        source=[STATUS.STARTED, STATUS.ASSIGNED], target=STATUS.DONE)
+    # @status.transition(
+    #     source=[STATUS.STARTED, STATUS.ASSIGNED], target=STATUS.DONE)
     def done(self):
         """Cancel existing task."""
         self.task.finished = now()

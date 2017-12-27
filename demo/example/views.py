@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.generic import ListView, UpdateView, TemplateView
+from django.db import transaction
 
 from viewflow.flow.views import UpdateProcessView, CreateProcessView
 from viewflow.models import Process, Task
@@ -96,7 +97,8 @@ class FillDailyTimesheetView(UpdateProcessView):
         approval.save()
 
         if '_continue' in form.data:
-            return super(FillDailyTimesheetView, self).form_valid(form)
+            transaction.on_commit(self.activation_done)
+            # return super(FillDailyTimesheetView, self).form_valid(form)
         return super(UpdateView, self).form_valid(form)
 
 

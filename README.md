@@ -37,6 +37,6 @@ $ ./manage.py runserver 0.0.0.0:8000
 
 run celery worker
 ```bash
-$ celery -A demo worker
+$ celery -A demo worker --loglevel=info
 
 ```
