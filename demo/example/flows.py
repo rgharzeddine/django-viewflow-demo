@@ -16,15 +16,7 @@ from .views import (
 )
 
 from .tasks import calculate_sheet_payroll
-from .celery_viewflow import CeleryJobActivation, CeleryJob
-
-
-class PayrollJobActivation(CeleryJobActivation):
-
-    def run_async(self, *args, **kwargs):
-        # WORKS
-        calculate_sheet_payroll.delay(self.process.sheet.id)
-        self.done()
+from flowutils.activities import Job
 
 
 def assign_user(activation):
@@ -60,17 +52,15 @@ class DailyTimesheetApprovalFlow(Flow):
     )
 
     calculate_payroll = (
-        CeleryJob(
-            # calculate_sheet_payroll,
-            activation_class=PayrollJobActivation,
+        Job(
+            calculate_sheet_payroll,
         )
         .Next(this.approve)
     )
-
     approve = (
         flow.View(
             ApproveDailyTimesheetView,
-            task_title='Approve this timesheet',
+            task_title='Approve this daily timesheet',
         )
         .Permission('auth.can_approve')
         .Next(this.check_approval)
