@@ -1,17 +1,16 @@
 from django.utils.timezone import now
 from viewflow import flow
-from viewflow.activation import AbstractJobActivation, STATUS
+from viewflow.activation import Activation, STATUS
 from viewflow import signals
 # from viewflow.decorators import flow_job
 # from celery.decorators import task
 
 
-class JobActivation(AbstractJobActivation):
+class JobActivation(Activation):
 
     def run_async(self, *args, **kwargs):
         kw = self.get_kwargs()
         self.func.delay(**kw)
-        self.done()
 
     def get_kwargs(self):
         path = '{}.{}'.format(
@@ -30,23 +29,24 @@ class JobActivation(AbstractJobActivation):
             process_pk=self.process.pk,
             task_pk=self.task.pk,
         )
-    status = AbstractJobActivation.status
+    status = Activation.status
 
     @status.transition(source=STATUS.NEW, target=STATUS.DONE)
     def schedule(self):
         """Schedule task for execution."""
-        # with self.exception_guard():
-        self.run_async()
-        self.task.finished = now()
-        self.set_status(STATUS.DONE)
-        self.task.save()
-        signals.task_finished.send(
-            sender=self.flow_class, process=self.process, task=self.task)
-        self.activate_next()
+        with self.exception_guard():
+            self.run_async()
+            self.task.finished = now()
+            self.set_status(STATUS.DONE)
+            self.task.save()
+            signals.task_finished.send(
+                sender=self.flow_class, process=self.process, task=self.task)
+            self.activate_next()
 
     @status.transition(source=STATUS.DONE)
     def activate_next(self):
-        super(JobActivation, self).activate_next()
+        self.flow_task._next.activate(
+            prev_activation=self, token=self.task.token)
 
     @classmethod
     def activate(cls, flow_task, prev_activation, token):
@@ -74,29 +74,17 @@ class JobActivation(AbstractJobActivation):
 
         return activation
 
-    def assign(self):
-        pass
-
-    def start(self):
-        pass
-
-    def restart(self):
-        pass
-
-    def done(self):
-        pass
-
-    def error(self, comments=""):
-        pass
-
-    def retry(self):
-        pass
-
     def undo(self):
-        pass
+        "should be available"
 
     def cancel(self):
-        pass
+        "should be available"
+
+    def restart(self):
+        "should be available"
+
+    def done(self):
+        "should be available"
 
 
 class Job(flow.AbstractJob):
