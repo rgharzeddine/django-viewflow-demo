@@ -1,8 +1,12 @@
+import inspect
+
 from django.core.management.base import BaseCommand
 
 from viewflow import flow
+from viewflow.base import Flow
 
-from demo.example.flows import VacationApprovalFlow
+from demo.example import flows
+
 
 TEMPLATE = """\
 digraph {{
@@ -22,15 +26,46 @@ digraph {{
 class Command(BaseCommand):
     help = 'Visualise a viewflow process'		
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--list',
+            action='store_true',
+            dest='show_list',
+            help='List available Workflows',
+        )
+
+        parser.add_argument('process', type=str, nargs='?', default=None)
+
+    def show_list(self, *args, **options):
+        for key, value in inspect.getmembers(flows):
+            if (value is not Flow
+                    and inspect.isclass(value)
+                    and Flow in value.__mro__):
+                self.stdout.write(f'{key}: {value.process_description}')
+
     def handle(self, *args, **options):
+        
+        klass = None
+        process = options['process']
+
+        if options['show_list']:
+            self.show_list(*args, **options)
+            return
+
+        try:
+            klass = getattr(flows, process)
+        except (AttributeError, TypeError):
+            self.stdout.write(f'please specify a valid workflow class') 
+            return
+
 
         mapping = []
         routes = []
         definition = set()
 
-        fields = { id(v): k for k, v in VacationApprovalFlow.__dict__.items() }
+        fields = { id(v): k for k, v in klass.__dict__.items() }
 
-        for name, value in VacationApprovalFlow.__dict__.items():
+        for name, value in klass.__dict__.items():
 
             if isinstance(value, flow.Split):
                 for task in value._activate_next:
@@ -61,7 +96,7 @@ class Command(BaseCommand):
 
 
         self.stdout.write(TEMPLATE.format(
-            label=VacationApprovalFlow.process_description, 
+            label=klass.process_description, 
             definition='\n'.join(definition),
             routes='\n'.join(routes)
         ))
