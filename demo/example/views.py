@@ -64,7 +64,7 @@ class StartDailyTimesheetProcessView(CreateProcessView):
 
     def form_valid(self, form):
         sheet = form.save(commit=False)
-        sheet.for_user = self.request.user
+        sheet.requester = self.request.user
         sheet.save()
 
         approval = self.activation.process
@@ -89,7 +89,7 @@ class FillDailyTimesheetView(UpdateProcessView):
 
     def form_valid(self, form):
         sheet = form.save(commit=False)
-        sheet.for_user = self.request.user
+        sheet.requester = self.request.user
         sheet.save()
 
         approval = self.activation.process
@@ -132,7 +132,7 @@ class DailyTimesheetListView(ListView):
         user = self.request.user
         if user.has_perm('auth.can_approve'):
             return DailyTimesheet.objects.all()
-        return DailyTimesheet.objects.filter(for_user=user)
+        return DailyTimesheet.objects.filter(requester=user)
 
 
 class VacationListView(ListView):
@@ -144,7 +144,7 @@ class VacationListView(ListView):
         user = self.request.user
         if user.has_perm('auth.can_approve'):
             return Vacation.objects.all().order_by('-start_date')
-        return Vacation.objects.filter(for_user=user).order_by('-start_date')
+        return Vacation.objects.filter(requester=user).order_by('-start_date')
 
 
 # vacation flow views
@@ -161,7 +161,7 @@ class StartVacationProcessView(CreateProcessView):
 
     def form_valid(self, form):
         vacation = form.save(commit=False)
-        vacation.for_user = self.request.user
+        vacation.requester = self.request.user
         vacation.save()
 
         approval = self.activation.process
@@ -186,7 +186,7 @@ class FillVacationView(UpdateProcessView):
 
     def form_valid(self, form):
         vacation = form.save(commit=False)
-        vacation.for_user = self.request.user
+        vacation.requester = self.request.user
         vacation.request_details = False
         vacation.save()
 

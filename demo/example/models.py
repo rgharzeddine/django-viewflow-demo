@@ -40,7 +40,7 @@ class DailyTimesheet(Model):
         ('business_trip', 'Business Trip'),
     ]
 
-    for_user = ForeignKey(User, on_delete=CASCADE, related_name='sheets')
+    requester = ForeignKey(User, on_delete=CASCADE, related_name='sheets')
     date = DateField()
     code = CharField(max_length=20, choices=CODE, default='present')
     created_at = DateTimeField(auto_now=True)
@@ -83,7 +83,7 @@ class DailyTimesheetApproval(Process):
     def __str__(self):
         if self.sheet:
             return 'Daily timesheet approval for {} on date {}'.format(
-                self.sheet.for_user.username,
+                self.sheet.requester.username,
                 self.sheet.date,
             )
         return 'New timesheet approval'
@@ -91,7 +91,7 @@ class DailyTimesheetApproval(Process):
 
 class Vacation(Model):
 
-    for_user = ForeignKey(User, on_delete=CASCADE, related_name='vacations')
+    requester = ForeignKey(User, on_delete=CASCADE, related_name='vacations')
     start_date = DateField()
     end_date = DateField()
     passport_expiry_date = DateField(null=True, blank=True)
@@ -143,7 +143,7 @@ class VacationApproval(Process):
     def __str__(self):
         if self.vacation:
             return 'Vacation approval for {} starting {} and ending {}'.format(
-                self.vacation.for_user.username,
+                self.vacation.requester.username,
                 self.vacation.start_date,
                 self.vacation.end_date,
             )

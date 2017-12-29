@@ -16,20 +16,14 @@ from .views import (
 )
 
 from .tasks import calculate_sheet_payroll
-from flowutils.activities import Job
-
-
-def assign_user(activation):
-    return activation.process.created_by
-
-
-def check_vacation_approved(this_flow):
-    return this_flow.task.process.vacation.is_approved()
+from flowutils import activities
 
 
 class DailyTimesheetApprovalFlow(Flow):
     process_class = DailyTimesheetApproval
     lock_impl = lock.no_lock
+
+    process_description = 'Daily Timesheet Approval'
 
     label = 'daily'
     flow_label = 'daily'
@@ -47,16 +41,15 @@ class DailyTimesheetApprovalFlow(Flow):
             FillDailyTimesheetView,
             task_title='Fill your daily timesheet')
         .Permission('auth.no_permission')
-        .Assign(assign_user)
+        .Assign(lambda a: a.process.created_by)
         .Next(this.calculate_payroll)
     )
 
     calculate_payroll = (
-        Job(
-            calculate_sheet_payroll,
-        )
+        activities.Job(calculate_sheet_payroll)
         .Next(this.approve)
     )
+
     approve = (
         flow.View(
             ApproveDailyTimesheetView,
@@ -67,26 +60,16 @@ class DailyTimesheetApprovalFlow(Flow):
     )
 
     check_approval = (
-
         flow.If(lambda a: a.task.process.sheet.is_approved())
         .Then(this.end)
         .Else(this.fill)
     )
+
     end = flow.End()
-
-    # @method_decorator(flow.flow_func)
-    # def on_calculate_payroll(self, activation, sheet):
-    #     activation.prepare()
-    #     calculate_payroll.delay(activation)
-    #     activation.done()
-
-    # def get_sheet_handler_task(self, flow_task, sheet):
-    #     return Task.objects.get(process=sheet.process)
 
 
 class VacationApprovalFlow(Flow):
     process_class = VacationApproval
-    # lock_impl = lock.select_for_update_lock
     lock_impl = lock.no_lock
 
     process_description = 'Vacation Approval Request'
@@ -107,7 +90,7 @@ class VacationApprovalFlow(Flow):
             FillVacationView,
             task_title='Fill your vacation details')
         .Permission('auth.no_permission')
-        .Assign(assign_user)
+        .Assign(lambda a: a.process.created_by)
         .Next(this.split)
     )
 
@@ -134,7 +117,7 @@ class VacationApprovalFlow(Flow):
             UpdateVacationView,
             task_title='Update your vacation details')
         .Permission('auth.no_permission')
-        .Assign(assign_user)
+        .Assign(lambda a: a.process.created_by)
         .Next(this.approve)
     )
 
@@ -147,7 +130,7 @@ class VacationApprovalFlow(Flow):
         .Next(this.check_approval)
     )
     check_approval = (
-        flow.If(check_vacation_approved)
+        flow.If(lambda a: a.task.process.vacation.is_approved())
         .Then(this.join_)
         .Else(this.update)
     )

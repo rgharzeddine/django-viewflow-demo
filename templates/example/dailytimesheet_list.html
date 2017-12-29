@@ -23,7 +23,7 @@ My Timesheets
                     <tr>
                         <th> Date </th>
                         <th> Code </th>
-                        <th> For User </th>
+                        <th> Requester </th>
                         <th> Payroll </th>
                         <th> Approval Status </th>
                         <th> Approved By </th>
@@ -35,7 +35,7 @@ My Timesheets
                     <tr>
                         <td>{{ sheet.date }}</td>
                         <td>{{ sheet.code }}</td>
-                        <td>{{ sheet.for_user.username }}</td>
+                        <td>{{ sheet.requester.username }}</td>
                         <td>{{ sheet.payroll }}</td>
                         <td>{{ sheet.approval_status }}</td>
                         <td>{{ sheet.approved_by.username }}</td>
