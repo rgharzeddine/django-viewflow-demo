@@ -131,7 +131,7 @@ USER_PASSWORD = 'pass@1234'
 
 AUTH_PROFILE_MODULE = 'auth.User'
 
-DATE_INPUT_FORMAT = ['%Y-%m-%d']
+DATE_INPUT_FORMAT = ['%Y-%m-%d', '%d/%m/%Y']
 
 # LOGIN_URL = 'example:index'
 

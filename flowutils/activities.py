@@ -2,8 +2,6 @@ from django.utils.timezone import now
 from viewflow import flow
 from viewflow.activation import Activation, STATUS
 from viewflow import signals
-# from viewflow.decorators import flow_job
-# from celery.decorators import task
 
 
 class JobActivation(Activation):
