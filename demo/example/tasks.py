@@ -15,3 +15,4 @@ def calculate_sheet_payroll(activation, **kwargs):
     sheet_id = activation.process.sheet.pk
     sheet = DailyTimesheet.objects.get(id=int(sheet_id))
     sheet.calculate_payroll()
+    return 'happy new year'

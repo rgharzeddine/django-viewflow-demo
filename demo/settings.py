@@ -135,13 +135,11 @@ DATE_INPUT_FORMAT = ['%Y-%m-%d', '%d/%m/%Y']
 
 # LOGIN_URL = 'example:index'
 
-
 # CELERY
 # BROKER_URL = 'redis://localhost:6379'
 # CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 BROKER_URL = 'amqp://guest@localhost//'
-CELERY_RESULT_BACKEND = 'amqp://guest@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Lebanon'
